@@ -194,6 +194,29 @@ $(function () {
             });
             layer.addTo(map);
 
+                        var legend = L.control({position: 'bottomright'});
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend');
+                labels = ['<strong>Classes</strong>'],
+                categories = ['Water Body','CropLand','Forest Land','Settlement','Vegetated Wetland', 'Open Grassland', 'Wooded Grassland', 'Otherlands'];
+                var colors = ['blue', 'yellow', '#4E9F3D', 'red', '#4C74C9', '#A9C52F', '#886F6F', '#9E9D89']
+                for (var i = 0; i < categories.length; i++) {
+                    for(var k=0; k < colors.length; k++){
+                        if(i === k){
+                                                    div.innerHTML += 
+                        labels.push(
+                            '<i style="background:' + colors[k] + '"></i> ' +
+                            (categories[i] ? categories[i] : '+'));
+                        }
+                    }
+                    }
+
+                    div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+            legend.addTo(map);
             console.log(layer);
             //lc.addOverlay(landcover, layer);
 
@@ -228,10 +251,34 @@ $(function () {
             var layer = new GeoRasterLayer({
                 georaster: georaster,
                 opacity: 0.7,
-                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '4E9F3D' : values[0] === 4 ? 'red': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#886F6F' : values[0] === 8 ? '#9E9D89' : null ,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? 'red': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#886F6F' : values[0] === 8 ? '#9E9D89' : null ,
                 resolution: 256
             });
             layer.addTo(map);
+
+            var legend = L.control({position: 'bottomleft'});
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend');
+                labels = ['<strong>Classes</strong>'],
+                categories = ['Water Body','CropLand','Forest Land','Settlement','Vegetated Wetland', 'Open Grassland', 'Wooded Grassland', 'Otherlands'];
+                var colors = ['blue', 'yellow', '#4E9F3D', 'red', '#4C74C9', '#A9C52F', '#886F6F', '#9E9D89']
+                for (var i = 0; i < categories.length; i++) {
+                    for(var k=0; k < colors.length; k++){
+                        if(i === k){
+                                                    div.innerHTML += 
+                        labels.push(
+                            '<i style="background:' + colors[k] + '"></i> ' +
+                            (categories[i] ? categories[i] : '+'));
+                        }
+                    }
+                    }
+
+                    div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+            legend.addTo(map);
 
             console.log(layer);
             //lc.addOverlay(landcover, layer);
