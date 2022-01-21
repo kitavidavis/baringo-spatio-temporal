@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>Lake Baringo Water level transformations</title> 
+<link rel="shortcut icon" href="favicon.ico"> 
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<script defer src="/home/js/font-awesome/all.min.js"></script>
+
+<link id="theme-style" rel="stylesheet" href="/home/css/home.css">
+
+<link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+crossorigin=""/>
+
+<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+<style>
+.no-wrap {
+    background: rgb(241, 238, 238);
+    overflow-x: hidden;
+}
+#map {
+    width: 100%;
+}
+
+</style>
+
+<style type="text/css">
+		table {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		td {
+			border: 1px solid black;
+		}
+
+		.legend {
+			padding: 6px 18px;
+			background-color: rgba(255,255,255,0.8);
+			box-shadow: 0 0 15px rgba(0,0,0,0.2);
+			border-radius: 5px;
+		}
+		.legend i {
+			width: 18px;
+			height: 18px;
+			float: left;
+			margin-right: 8px;
+			opacity: 0.7;
+		}
+		div.legend.leaflet-control br {
+			clear: both;
+		}
+	</style>
+</head> 
+
+<body class="no-wrap">   	
+
+<div >
+
+<div >
+<div>
+
+{{{body}}}
+
+</div>
+</div>
+
+</div>    					
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script type="text/javascript" src="/home/js/shp/shp.js"></script>
+<script src="/home/js/bootstrap.min.js"></script> 
+<script src="/home/js/home.js"></script>  
+<script type="text/javascript" src="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.js"></script>
+<script type="text/javascript" src="/home/js/jquery.toast.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+crossorigin=""></script>
+<script src="/leaflet.ajax.min.js" ></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+<script src="/home/js/app.js"></script>
+<script src="https://unpkg.com/georaster"></script>
+<script src="https://unpkg.com/proj4"></script>
+<script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+<script type="text/javascript">
+
+var map;
+//==========================
+$(window).on("resize", function () { $("#map-div").height($(window).height() * 2/3 ); }).trigger("resize");
+$(window).on("resize", function () { $("#map").height($(window).height() ); }).trigger("resize");
+
+//===============================================================================
+$(function () {
+    $('#toolbar').w2toolbar({
+        name: 'toolbar',
+        items: [
+            { type: 'button', id: 'default', text: 'Default View' },
+            { type: 'break' },
+            { type: 'button', id: 'full', text: 'Full Screen' }
+        ],
+        onClick: function (event) {
+            if(event.target == 'all'){
+				$('#main').show();
+				$('#sub').hide();
+            }
+
+			if(event.target == 'filter'){
+				$('#main').hide();
+				$('#sub').show();
+			}
+        }
+    });
+});
+
+var population;
+var landcover;
+var lc;
+//==============================================================================
+$(function () {
+    $(window).on("resize", function () { $("#sidebar").height($(window).height() ); }).trigger("resize");
+    $('#sidebar').w2sidebar({
+        name : 'sidebar',
+        nodes:[
+            { id: 'land', text: 'Land Cover', expanded: true, group: true,
+				nodes: [ 	{ id: '1995l', text: '1995' },
+                            { id: '2000l', text: '2000'},
+						    { id: '2005l', text: '2005' },
+                            { id: '2010l', text: '2010'},
+		                    { id: '2015l', text: '2015'},
+                            { id: '2020l', text: '2020'},
+                            { id: 'animate', text: 'Animate', icon:"fa fa-video"}
+						]
+            },
+            { id: 'population', text: 'Population', expanded: true, group: true, 
+                nodes: [
+                    {id: '2000p', text: '2000'},
+                    {id: '2005p', text: '2005'},
+                    {id: '2010p', text: '2010'},
+                    {id: '2015p', text: '2015'},
+                    {id: '2020p', text: '2020'}
+                ]
+            },
+            { id: 'erosion', text: 'Erosion', expanded: false, group: true,
+                nodes: [
+                    {id: '1995ee', text: '1995'},
+                    {id: '2000ee', text: '2000'},
+                    {id:'2005ee', text: '2005'},
+                    {id:'2010ee', text: '2010'},
+                    {id: '2015ee', text: '2015'},
+                    {id: '2020ee', text: '2020'}
+                ]
+            }
+            
+		],
+        onClick: async function(event){
+			//$('#main').hide();
+			//$('#sub').show();
+
+			var category = event.target;
+
+            if(category[category.length - 1] === 'l'){
+                var a = category.slice(0, -1);
+                landcover = 'LC'+a;
+            var dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            var file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            var arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            var layer = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '4E9F3D' : values[0] === 4 ? 'red': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#886F6F' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            layer.addTo(map);
+
+            console.log(layer);
+            //lc.addOverlay(landcover, layer);
+
+            
+            });
+
+            }
+            }
+
+            if(category == 'animate'){
+                alert(1);
+                for(var i = 1995; i < 2025; i=i+5){
+                    setTimeout(async function(){
+            var a = i;
+            landcover = 'LC'+a;
+            var dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            var file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            var arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            var layer = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '4E9F3D' : values[0] === 4 ? 'red': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#886F6F' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            layer.addTo(map);
+
+            console.log(layer);
+            //lc.addOverlay(landcover, layer);
+
+            
+            });
+
+            }
+                    }, 30000)
+                }
+            }
+
+            if(category[category.length - 1] === 'p') {
+            var a = category.slice(0, -1); 
+            population = 'Population'+a;
+             var dataname = 'population'+a+'.tif';
+                // adding the cleaned data.
+            var file = '/data/clipped/clipped/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            var reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            var arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            var layer2 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                resolution: 256
+            });
+            layer2.addTo(map);
+
+            //lc.addOverlay(population, layer2);
+            
+            });
+
+            }
+            }
+
+        }
+    });
+
+	//w2ui.sidebar.click('land');
+});
+
+$(function() {
+map = new L.map('map').setView([0.5, 36.819], 6);
+// add basemaps from cartodb - darkmatter.
+var CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+	attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
+	subdomains:'abcd',
+	minZoom:4,
+	maxZoom:15
+}).addTo(map);
+// add the second basemap from OSM
+var osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+	attribution: '&copy; OSM',
+	minZoom: 4,
+	maxZoom: 15
+});
+
+	var file = '/data/baringo/baringo_catchment.zip';
+
+    let fileArr = file.split('-');
+    var originalFile = fileArr[0];
+
+	     var geo = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                for(var key in f.properties){
+                out.push(key);
+        }
+        l.bindPopup(out.join("<br />"));
+    }
+    },         
+	style: function(feature) {
+            return {
+                opacity: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                color: 'blue',
+                fillColor: 'transparent'
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                fillOpacity: 0.7,
+                color: 'blue',
+                fillColor: 'transparent'
+            });
+        }});
+    
+        shp(file).then(function(data){
+        geo.addData(data);
+        geo.addTo(map);
+        map.fitBounds(geo.getBounds());
+        });
+
+        //console.log(geo);
+        geo.addTo(map);
+
+        var baseLayers = {
+            "CartoDB": CartoDB,
+            "OSM": osm
+        };
+
+       lc = L.control.layers(baseLayers).addTo(map);
+
+})
+
+</script>
+</body>
+</html> 
+
