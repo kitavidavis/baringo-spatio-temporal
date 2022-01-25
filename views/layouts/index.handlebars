@@ -31,9 +31,27 @@ crossorigin=""/>
     width: 100%;
 }
 
-</style>
+#loader {
+    border: 4px solid #000;
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 50px;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    
+}
 
-<style type="text/css">
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 		table {
 			border: 1px solid black;
 			border-collapse: collapse;
@@ -124,6 +142,284 @@ $(function () {
 var population;
 var landcover;
 var lc;
+var rasterLayers = [];
+var _layer1995;
+var _layer2000;
+var _layer2005;
+var _layer2010;
+var _layer2015;
+var _layer2020;
+
+var currentLayer = [];
+// loading all lc data without adding it to map;
+async function loadOne(){
+            let a = 1995;
+            let landcover = 'LC'+a;
+            let dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            let file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            let arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            _layer1995 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? '#191919': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#F14A16' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            
+                       rasterLayers.push('LC 1995');
+
+                       progressText();
+            
+            });
+
+            }
+}
+loadOne();
+
+async function loadTwo(){
+            let a = 2000;
+            let landcover = 'LC'+a;
+            let dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            let file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            let arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            _layer2000 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? '#191919': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#F14A16' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            //layer.addTo(map);
+                       rasterLayers.push('LC 2000');
+
+            
+            });
+
+            }
+}
+loadTwo();
+
+async function loadThree(){
+            let a = 2005;
+            let landcover = 'LC'+a;
+            let dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            let file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            let arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            _layer2005 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? '#191919': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#F14A16' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            //layer.addTo(map);
+                       rasterLayers.push('LC 2005');
+
+            
+            });
+
+            }
+}
+loadThree();
+
+async function loadFour(){
+            let a = 2010;
+            let landcover = 'LC'+a;
+            let dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            let file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            let arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            _layer2010 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? '#191919': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#F14A16' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            //layer.addTo(map);
+
+                        rasterLayers.push('LC 2010');
+
+            
+            });
+
+            }
+}
+loadFour();
+
+async function loadFive(){
+            let a = 2015;
+            let landcover = 'LC'+a;
+            let dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            let file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            let arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            _layer2015 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? '#191919': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#F14A16' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            //layer.addTo(map);
+
+                        rasterLayers.push('LC 2015');
+
+            
+            });
+
+            }
+}
+loadFive();
+
+async function loadSix(){
+            let a = 2020;
+            let landcover = 'LC'+a;
+            let dataname = 'LC'+a+'.tif';
+                // adding the cleaned data.
+            let file = '/data/revised_cleaned/revised_cleaned/'+dataname;
+            let blob = await fetch(file).then(r => r.blob());
+            let reader = new FileReader();
+            reader.readAsArrayBuffer(blob); 
+            reader.onloadend = function() {
+            let arrayBuffer = reader.result;
+            parseGeoraster(arrayBuffer).then(georaster => {
+
+            /*
+                GeoRasterLayer is an extension of GridLayer,
+                which means can use GridLayer options like opacity.
+                Just make sure to include the georaster option!
+                http://leafletjs.com/reference-1.2.0.html#gridlayer
+            */
+            _layer2020 = new GeoRasterLayer({
+                georaster: georaster,
+                opacity: 0.7,
+                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? '#191919': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#F14A16' : values[0] === 8 ? '#9E9D89' : null ,
+                resolution: 256
+            });
+            //layer.addTo(map);
+            _layer2020.addTo(map);
+
+            
+            var legend = L.control({position: 'bottomright'});
+            legend.onAdd = function (map) {
+
+                var div = L.DomUtil.create('div', 'info legend');
+                labels = ['<strong>Classes</strong>'],
+                categories = ['Water Body','CropLand','Forest Land','Settlement','Vegetated Wetland', 'Open Grassland', 'Wooded Grassland', 'Otherlands'];
+                var colors = ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89']
+                for (var i = 0; i < categories.length; i++) {
+                    for(var k=0; k < colors.length; k++){
+                        if(i === k){
+                        div.innerHTML += 
+                        labels.push(
+                            '<i style="background:' + colors[k] + '"></i> ' +
+                            (categories[i] ? categories[i] : '+'));
+                        }
+                    }
+                    }
+
+                div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+            legend.addTo(map);
+
+            currentLayer.push(_layer2020);
+            rasterLayers.push('LC 2020'); 
+            progressText();
+
+                  });
+            }
+}
+loadSix();
+
+localStorage.setItem('textbox', 0);
+function progressText(){
+var text;
+
+L.Control.textbox = L.Control.extend({
+onAdd: function(map) {
+
+text = L.DomUtil.create('div');
+text.id = "info_text";
+text.style.background = '#fff';
+if(rasterLayers.length < 4){
+   text.innerHTML = "<div id='loader'></div>" 
+} else {
+    text.innerHTML = '';
+    text.innerHTML = "Loading complete..."
+}
+return text;
+},
+
+onRemove: function(map) {
+        // Nothing to do here
+    }
+});
+L.control.textbox = function(opts) { return new L.Control.textbox(opts);}
+L.control.textbox({ position: 'topleft' }).addTo(map);
+
+
+}
 //==============================================================================
 $(function () {
     $(window).on("resize", function () { $("#sidebar").height($(window).height() ); }).trigger("resize");
@@ -137,7 +433,7 @@ $(function () {
                             { id: '2010l', text: '2010'},
 		                    { id: '2015l', text: '2015'},
                             { id: '2020l', text: '2020'},
-                            { id: 'animate', text: 'Animate', icon:"fa fa-video"}
+                            { id: 'animate', text: 'Play changes', icon:"fa fa-video"}
 						]
             },
             { id: 'population', text: 'Population', expanded: true, group: true, 
@@ -168,127 +464,76 @@ $(function () {
 			var category = event.target;
 
             if(category[category.length - 1] === 'l'){
-                var a = category.slice(0, -1);
-                landcover = 'LC'+a;
-            var dataname = 'LC'+a+'.tif';
-                // adding the cleaned data.
-            var file = '/data/revised_cleaned/revised_cleaned/'+dataname;
-            let blob = await fetch(file).then(r => r.blob());
-            var reader = new FileReader();
-            reader.readAsArrayBuffer(blob); 
-            reader.onloadend = function() {
-            var arrayBuffer = reader.result;
-            parseGeoraster(arrayBuffer).then(georaster => {
+            var a = category.slice(0, -1);
 
-            /*
-                GeoRasterLayer is an extension of GridLayer,
-                which means can use GridLayer options like opacity.
-                Just make sure to include the georaster option!
-                http://leafletjs.com/reference-1.2.0.html#gridlayer
-            */
-            var layer = new GeoRasterLayer({
-                georaster: georaster,
-                opacity: 0.7,
-                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '4E9F3D' : values[0] === 4 ? 'red': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#886F6F' : values[0] === 8 ? '#9E9D89' : null ,
-                resolution: 256
-            });
-            layer.addTo(map);
-
-                        var legend = L.control({position: 'bottomright'});
-            legend.onAdd = function (map) {
-
-                var div = L.DomUtil.create('div', 'info legend');
-                labels = ['<strong>Classes</strong>'],
-                categories = ['Water Body','CropLand','Forest Land','Settlement','Vegetated Wetland', 'Open Grassland', 'Wooded Grassland', 'Otherlands'];
-                var colors = ['blue', 'yellow', '#4E9F3D', 'red', '#4C74C9', '#A9C52F', '#886F6F', '#9E9D89']
-                for (var i = 0; i < categories.length; i++) {
-                    for(var k=0; k < colors.length; k++){
-                        if(i === k){
-                                                    div.innerHTML += 
-                        labels.push(
-                            '<i style="background:' + colors[k] + '"></i> ' +
-                            (categories[i] ? categories[i] : '+'));
-                        }
-                    }
-                    }
-
-                    div.innerHTML = labels.join('<br>');
-                return div;
-            };
-
-            legend.addTo(map);
-            console.log(layer);
-            //lc.addOverlay(landcover, layer);
-
-            
-            });
-
+            if(a == 1995){
+                 map.removeLayer(currentLayer[0]);
+                 currentLayer.pop();
+                _layer1995.addTo(map);
+           currentLayer.push(_layer1995)
             }
+
+            if(a == 2000){
+                map.removeLayer(currentLayer[0]);
+                currentLayer.pop();
+                _layer2000.addTo(map);
+
+            currentLayer.push(_layer2000)
+            }
+
+            if(a == 2005){
+                map.removeLayer(currentLayer[0]);
+                currentLayer.pop();
+                _layer2005.addTo(map);
+                
+
+             currentLayer.push(_layer2005)
+            }
+
+            if(a == 2010){
+                 map.removeLayer(currentLayer[0]);
+                 currentLayer.pop();
+                _layer2010.addTo(map);
+
+             currentLayer.push(_layer2010)
+            }
+
+            if(a == 2015){
+                map.removeLayer(currentLayer[0]);
+                currentLayer.pop();
+                _layer2015.addTo(map);
+                
+            currentLayer.push(_layer2015)
+              
+            }
+
+            if(a == 2020){
+               map.removeLayer(currentLayer[0]);
+               currentLayer.pop();
+         _layer2020.addTo(map);
+                
+             currentLayer.push(_layer2020)
+            }
+
             }
 
             if(category == 'animate'){
-                alert(1);
-                for(var i = 1995; i < 2025; i=i+5){
-                    setTimeout(async function(){
-            var a = i;
-            landcover = 'LC'+a;
-            var dataname = 'LC'+a+'.tif';
-                // adding the cleaned data.
-            var file = '/data/revised_cleaned/revised_cleaned/'+dataname;
-            let blob = await fetch(file).then(r => r.blob());
-            var reader = new FileReader();
-            reader.readAsArrayBuffer(blob); 
-            reader.onloadend = function() {
-            var arrayBuffer = reader.result;
-            parseGeoraster(arrayBuffer).then(georaster => {
+               var time = 3000;
 
-            /*
-                GeoRasterLayer is an extension of GridLayer,
-                which means can use GridLayer options like opacity.
-                Just make sure to include the georaster option!
-                http://leafletjs.com/reference-1.2.0.html#gridlayer
-            */
-            var layer = new GeoRasterLayer({
-                georaster: georaster,
-                opacity: 0.7,
-                pixelValuesToColorFn: values => values[0] === 1 ? 'blue' : values[0] === 2 ? 'yellow' : values[0] === 3 ? '#4E9F3D' : values[0] === 4 ? 'red': values[0] === 5 ? '#4C74C9' : values[0] === 6 ? '#A9C52F' : values[0] === 7 ? '#886F6F' : values[0] === 8 ? '#9E9D89' : null ,
-                resolution: 256
-            });
-            layer.addTo(map);
-
-            var legend = L.control({position: 'bottomleft'});
-            legend.onAdd = function (map) {
-
-                var div = L.DomUtil.create('div', 'info legend');
-                labels = ['<strong>Classes</strong>'],
-                categories = ['Water Body','CropLand','Forest Land','Settlement','Vegetated Wetland', 'Open Grassland', 'Wooded Grassland', 'Otherlands'];
-                var colors = ['blue', 'yellow', '#4E9F3D', 'red', '#4C74C9', '#A9C52F', '#886F6F', '#9E9D89']
-                for (var i = 0; i < categories.length; i++) {
-                    for(var k=0; k < colors.length; k++){
-                        if(i === k){
-                                                    div.innerHTML += 
-                        labels.push(
-                            '<i style="background:' + colors[k] + '"></i> ' +
-                            (categories[i] ? categories[i] : '+'));
-                        }
-                    }
-                    }
-
-                    div.innerHTML = labels.join('<br>');
-                return div;
-            };
-
-            legend.addTo(map);
-
-            console.log(layer);
-            //lc.addOverlay(landcover, layer);
-
-            
-            });
-
-            }
-                    }, 30000)
+               const sleep = (milliseconds) => {
+                return new Promise(resolve => setTimeout(resolve, milliseconds))
                 }
+
+               var layers = ['1995l', '2000l', '2005l', '2010l', '2015l', '2020l'];
+
+            const loadData = async () => {
+                for (const item of layers) {
+                    await sleep(time)
+                   w2ui.sidebar.click(item);
+                }
+                }
+
+                loadData()
             }
 
             if(category[category.length - 1] === 'p') {
