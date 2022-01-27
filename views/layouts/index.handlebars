@@ -112,28 +112,92 @@ crossorigin=""></script>
 <script type="text/javascript">
 
 var map;
-//==========================
-$(window).on("resize", function () { $("#map-div").height($(window).height() * 2/3 ); }).trigger("resize");
-$(window).on("resize", function () { $("#map").height($(window).height() ); }).trigger("resize");
+var CartoDB;
+var geo2;
 
+$('#chart-div').show();
+//==========================
+$(window).on("resize", function () { $("#map-div").height($(window).height() * 2/3 - 50 ); }).trigger("resize");
+$(window).on("resize", function () { $("#map").height($(window).height() * 2/3 - 50 ); }).trigger("resize");
+$(window).on("resize", function () { $("#chart-div").height($(window).height() * 1/3  ); }).trigger("resize");
+$(window).on("resize", function () { $("#canvas").height($(window).height() * 1/3  ); }).trigger("resize");
+$(window).on("resize", function () { $("#canvas2").height($(window).height() * 1/3 - 50 ); }).trigger("resize");
+if(localStorage.getItem('time') === null){
+    localStorage.setItem('time', 3000);
+}
 //===============================================================================
+
+function setAnimationTime () {
+    if (!w2ui.foo) {
+        $().w2form({
+            name: 'foo',
+            style: 'border: 0px; background-color: transparent;',
+            fields: [
+                            { field: 'anim_time', type: 'int',
+                html: {
+                    label: 'Speed(seconds)',
+                    attr: 'style="width: 80%"'
+                },
+                options: {
+                    arrows: true,
+                    min: 1,
+                    max: 10
+                }
+            }
+            ],
+            records: [
+            
+            ],
+            actions: {
+                "Reset": function () { this.clear(); },
+                "Save": function () {
+                    w2popup.close();
+                    var time = $('#anim_time').val();
+
+                    localStorage.setItem('time', time * 1000);
+                }
+            }
+        });
+    }
+    w2popup.open({
+        title   : 'Set animation speed',
+        body    : '<div id="form" style="width: 100%; height: 100%;"></div>',
+        style   : 'padding: 15px 0px 0px 0px',
+        width   : 500,
+        height  : 280,
+        showMax : true,
+        onToggle: function (event) {
+            $(w2ui.foo.box).hide();
+            event.onComplete = function () {
+                $(w2ui.foo.box).show();
+                w2ui.foo.resize();
+            }
+        },
+        onOpen: function (event) {
+            event.onComplete = function () {
+                // specifying an onOpen handler instead is equivalent to specifying an onBeforeOpen handler, which would make this code execute too early and hence not deliver.
+                $('#w2ui-popup #form').w2render('foo');
+            }
+        }
+    });
+}
+
 $(function () {
     $('#toolbar').w2toolbar({
         name: 'toolbar',
         items: [
-            { type: 'button', id: 'default', text: 'Default View' },
+            { type: 'button', id: 'play_time', text: 'Change animation speed' },
             { type: 'break' },
-            { type: 'button', id: 'full', text: 'Full Screen' }
+            { type: 'button', id: 'full', text: 'Full Screen' },
+            
         ],
         onClick: function (event) {
-            if(event.target == 'all'){
-				$('#main').show();
-				$('#sub').hide();
+            if(event.target == 'play_time'){
+				setAnimationTime();
             }
 
-			if(event.target == 'filter'){
-				$('#main').hide();
-				$('#sub').show();
+			if(event.target == 'full'){
+				map.toggleFullscreen()
 			}
         }
     });
@@ -151,6 +215,12 @@ var _layer2015;
 var _layer2020;
 
 var currentLayer = [];
+
+if(localStorage.getItem('status') === null){
+    localStorage.setItem('status', 'landcover');
+}
+
+if(localStorage.getItem('status') == 'landcover'){
 // loading all lc data without adding it to map;
 async function loadOne(){
             let a = 1995;
@@ -357,7 +427,7 @@ async function loadSix(){
             });
             //layer.addTo(map);
             _layer2020.addTo(map);
-
+            console.log(_layer2020);
             
             var legend = L.control({position: 'bottomright'});
             legend.onAdd = function (map) {
@@ -391,11 +461,33 @@ async function loadSix(){
             }
 }
 loadSix();
+} else if(localStorage.getItem('status') == 'population') {
+
+} else {
+
+}
 
 localStorage.setItem('textbox', 0);
 function progressText(){
 var text;
 
+if(rasterLayers.length < 4){
+    w2ui.sidebar.disable('1995l')
+    w2ui.sidebar.disable('2000l')
+    w2ui.sidebar.disable('2005l')
+    w2ui.sidebar.disable('2010l')
+    w2ui.sidebar.disable('2015l')
+    w2ui.sidebar.disable('2020l')
+      w2ui.sidebar.disable('animate')
+} else{
+     w2ui.sidebar.enable('1995l')
+    w2ui.sidebar.enable('2000l')
+    w2ui.sidebar.enable('2005l')
+    w2ui.sidebar.enable('2010l')
+    w2ui.sidebar.enable('2015l')
+    w2ui.sidebar.enable('2020l')
+      w2ui.sidebar.enable('animate')
+}
 L.Control.textbox = L.Control.extend({
 onAdd: function(map) {
 
@@ -426,7 +518,7 @@ $(function () {
     $('#sidebar').w2sidebar({
         name : 'sidebar',
         nodes:[
-            { id: 'land', text: 'Land Cover', expanded: true, group: true,
+            { id: 'land', text: 'Land Cover', expanded: true, selected: true,
 				nodes: [ 	{ id: '1995l', text: '1995' },
                             { id: '2000l', text: '2000'},
 						    { id: '2005l', text: '2005' },
@@ -436,23 +528,25 @@ $(function () {
                             { id: 'animate', text: 'Play changes', icon:"fa fa-video"}
 						]
             },
-            { id: 'population', text: 'Population', expanded: true, group: true, 
+            { id: 'population', text: 'Population',expanded: false, 
                 nodes: [
                     {id: '2000p', text: '2000'},
                     {id: '2005p', text: '2005'},
                     {id: '2010p', text: '2010'},
                     {id: '2015p', text: '2015'},
-                    {id: '2020p', text: '2020'}
+                    {id: '2020p', text: '2020'},
+                    { id: 'animate-population', text: 'Play changes', icon:"fa fa-video"}
                 ]
             },
-            { id: 'erosion', text: 'Erosion', expanded: false, group: true,
+            { id: 'erosion', text: 'Erosion', expanded: false,
                 nodes: [
                     {id: '1995ee', text: '1995'},
                     {id: '2000ee', text: '2000'},
                     {id:'2005ee', text: '2005'},
                     {id:'2010ee', text: '2010'},
                     {id: '2015ee', text: '2015'},
-                    {id: '2020ee', text: '2020'}
+                    {id: '2020ee', text: '2020'},
+                    {id: 'animate_risk', text: 'Play changes', icon: 'fa fa-video'}
                 ]
             }
             
@@ -471,6 +565,28 @@ $(function () {
                  currentLayer.pop();
                 _layer1995.addTo(map);
            currentLayer.push(_layer1995)
+           var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
+            var yValues = [120.60, 966.14, 972.80, 156.58, 13.99, 739.59, 3692.63, 0.67];
+            var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Landcover statistics - 1995"
+                }
+            }
+            });
+            compareYears('1995', '2020');
             }
 
             if(a == 2000){
@@ -479,6 +595,30 @@ $(function () {
                 _layer2000.addTo(map);
 
             currentLayer.push(_layer2000)
+
+                       var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
+            var yValues = [130.59, 2318.06, 600.34, 269.85, 22.65, 678.29, 2639.21, 4.00];
+            var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Landcover statistics - 2000"
+                }
+            }
+            });
+
+            compareYears('2000', '2020');
             }
 
             if(a == 2005){
@@ -488,6 +628,30 @@ $(function () {
                 
 
              currentLayer.push(_layer2005)
+
+            var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
+            var yValues = [135.26, 2379.36, 663.63, 135.93, 20.66, 664.97, 2663.20, 0.67];
+            var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Landcover statistics - 2005"
+                }
+            }
+            });
+
+            compareYears('2005', '2020');
             }
 
             if(a == 2010){
@@ -496,6 +660,30 @@ $(function () {
                 _layer2010.addTo(map);
 
              currentLayer.push(_layer2010)
+
+            var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
+            var yValues = [143.25, 1559.14, 840.87, 139.26, 2.67, 1429.21, 2547.93, 1.33];
+            var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Landcover statistics - 2010"
+                }
+            }
+            });
+
+            compareYears('2010', '2020');
             }
 
             if(a == 2015){
@@ -504,6 +692,29 @@ $(function () {
                 _layer2015.addTo(map);
                 
             currentLayer.push(_layer2015)
+
+            var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
+            var yValues = [247.86, 1681.74, 572.35, 206.55, 76.62, 273.85, 3602.02, 2.00];
+            var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Landcover statistics - 2015"
+                }
+            }
+            });
+            compareYears('2015', '2020')
               
             }
 
@@ -513,12 +724,35 @@ $(function () {
          _layer2020.addTo(map);
                 
              currentLayer.push(_layer2020)
+
+            var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
+            var yValues = [206.55, 1620.44, 974.80, 63.30, 32.65, 142.59, 3615.34, 6.66];
+            var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Landcover statistics - 2020"
+                }
+            }
+            });
+            compareYears('2020', '1995');
             }
 
             }
 
             if(category == 'animate'){
-               var time = 3000;
+               var time = localStorage.getItem('time');
 
                const sleep = (milliseconds) => {
                 return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -536,49 +770,1179 @@ $(function () {
                 loadData()
             }
 
+            if(category === 'animate-population'){
+                var time = localStorage.getItem('time');
+
+               const sleep = (milliseconds) => {
+                return new Promise(resolve => setTimeout(resolve, milliseconds))
+                }
+
+               var layers = ['2000p', '2005p', '2010p', '2015p', '2020p'];
+
+            const loadData = async () => {
+                for (const item of layers) {
+                    await sleep(time)
+                   w2ui.sidebar.click(item);
+                }
+                }
+
+                loadData()
+            }
+
+            if(category === 'animate_risk'){
+                var time = localStorage.getItem('time');
+
+               const sleep = (milliseconds) => {
+                return new Promise(resolve => setTimeout(resolve, milliseconds))
+                }
+
+               var layers = ['1995ee','2000ee', '2005ee', '2010ee', '2015ee', '2020ee'];
+
+            const loadData = async () => {
+                for (const item of layers) {
+                    await sleep(time)
+                   w2ui.sidebar.click(item);
+                }
+                }
+
+                loadData()
+            }
+
             if(category[category.length - 1] === 'p') {
             var a = category.slice(0, -1); 
-            population = 'Population'+a;
-             var dataname = 'population'+a+'.tif';
-                // adding the cleaned data.
-            var file = '/data/clipped/clipped/'+dataname;
-            let blob = await fetch(file).then(r => r.blob());
-            var reader = new FileReader();
-            reader.readAsArrayBuffer(blob); 
-            reader.onloadend = function() {
-            var arrayBuffer = reader.result;
-            parseGeoraster(arrayBuffer).then(georaster => {
 
-            /*
-                GeoRasterLayer is an extension of GridLayer,
-                which means can use GridLayer options like opacity.
-                Just make sure to include the georaster option!
-                http://leafletjs.com/reference-1.2.0.html#gridlayer
-            */
-            var layer2 = new GeoRasterLayer({
-                georaster: georaster,
-                opacity: 0.7,
-                resolution: 256
-            });
-            layer2.addTo(map);
-
-            //lc.addOverlay(population, layer2);
-            
-            });
+            loadPopulationFile(a);
 
             }
+
+            if(category[category.length - 2] === 'e') {
+            var aa = category.slice(0, -1); 
+
+            var a = aa.slice(0, -1);
+
+            loadErosionFile(a);
+
+            }
+
+
+            if(category === 'population'){
+                localStorage.setItem('status', 'population')
+                window.location.reload();
+            }
+
+            if(category === 'land'){
+                localStorage.setItem('status', 'landcover');
+                window.location.reload();
+            }
+
+            if(category === 'erosion'){
+                localStorage.setItem('status', 'erosion');
+                window.location.reload();
             }
 
         }
     });
 
+if(localStorage.getItem('status') == 'population'){
+    w2ui.sidebar.collapse('land');
+    w2ui.sidebar.collapse('erosion');
+    w2ui.sidebar.expand('population')
+    w2ui.sidebar.select('population');
+
+    $('#pop-no').hide();
+    $('#pop-yes').show();
+
+    // adding population vector files.
+    loadPopulationFile(null)
+    renderChart(null);
+}
+
+if(localStorage.getItem('status') == 'landcover'){
+    w2ui.sidebar.collapse('population');
+    w2ui.sidebar.collapse('erosion');
+    w2ui.sidebar.expand('land');
+    w2ui.sidebar.select('land');
+
+    $('#pop-no').show();
+    $('#pop-yes').hide();
+
+            map.eachLayer(function (layer) {
+    map.removeLayer(layer);
+});
+CartoDB.addTo(map);
+geo2.addTo(map);
+}
+
+if(localStorage.getItem('status') == 'erosion'){
+    w2ui.sidebar.collapse('population');
+    w2ui.sidebar.collapse('land');
+    w2ui.sidebar.expand('erosion');
+    w2ui.sidebar.select('erosion');
+
+    $('#pop-no').show();
+    $('#pop-yes').hide();
+
+    loadErosionFile(null);
+}
 	//w2ui.sidebar.click('land');
 });
+
+function getColor(p){
+    return p > 50000 ? '#bd0026' :
+				p > 5000  ? '#f03b20' :
+				p > 2000  ? '#fd8d3c' :
+				p > 1000   ? '#fecc5c' :
+				p > 500   ? '#ffffb2' :
+					   '#FFEDA0';   
+}
+
+function getErosionColor(p){
+    return p > 10 ? '#d7191c' :
+				p > 5  ? '#fdae61' :
+				p > 2  ? '#ffffbf' :
+				p > 1   ? '#a6d96a' :
+					   '#1a9641';   
+}
+
+function renderChart(year){
+    if(year == 'null'){
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [442421, 528074, 632391, 752015, 877032];
+            var barColors =  ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+    } else {
+        switch(year){
+            case '2000':
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [442421, 528074, 632391, 752015, 877032];
+            var barColors =  ['red', 'cyan', 'cyan', 'cyan', 'cyan'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2000', '2020');
+
+            break;
+
+            case '2005':
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [442421, 528074, 632391, 752015, 877032];
+            var barColors =  ['cyan', 'red', 'cyan', 'cyan', 'cyan'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2005', '2020');
+
+            break;
+
+            case '2010':
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [442421, 528074, 632391, 752015, 877032];
+            var barColors =  ['cyan', 'cyan', 'red', 'cyan', 'cyan'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2010', '2020');
+
+            break;
+
+            case '2015':
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [442421, 528074, 632391, 752015, 877032];
+            var barColors =  ['cyan', 'cyan', 'cyan', 'red', 'cyan'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2015', '2020');
+
+            break;
+
+            case '2020':
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [442421, 528074, 632391, 752015, 877032];
+            var barColors =  ['cyan', 'cyan', 'cyan', 'cyan', 'red'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2020', '2000');
+
+            break;
+        }
+    }
+}
+
+function renderErosionChart(year){
+        if(year === null){
+            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors =  ['#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Soil Loss(1995-2020)"
+                }
+            }
+            });
+    } else {
+        switch(year){
+            case '1995':
+            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors = ['cyan', '#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('1995', '2020');
+
+            break;
+
+            case '2000':
+            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors = ['#d7191c', 'cyan', '#d7191c', '#d7191c', '#d7191c', '#d7191c'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2000', '2020');
+
+            break;
+
+            case '2005':
+            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors = ['#d7191c', '#d7191c', 'cyan', '#d7191c', '#d7191c', '#d7191c'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2005', '2020');
+
+            break;
+
+            case '2010':
+            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors = ['#d7191c', '#d7191c', '#d7191c', 'cyan', '#d7191c', '#d7191c'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2010', '2020');
+
+            break;
+
+            case '2015':
+            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors = ['#d7191c', '#d7191c', '#d7191c', '#d7191c', 'cyan', '#d7191c'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+
+            compareYears('2015', '2020');
+
+            break;
+
+            case '2020':
+                 var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
+            var barColors = ['#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c', 'cyan'];
+
+            new Chart("canvas", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Baringo Population Changes(2000-2020)"
+                }
+            }
+            });
+            compareYears('2020', '2000');
+
+            break;
+        }
+    }
+}
+
+function loadErosionFile(year){
+    if(year === null){
+        var file = '/data/erosion.zip';
+
+    let fileArr = file.split('-');
+    var originalFile = fileArr[0];
+	var eFile = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                out.push(f.properties)
+                console.log(out);
+        l.bindPopup('<table><tr><td><strong>Name</strong></td><td>'+f.properties.SLNAME+'</td></tr><tr><td><strong>Erosion Risk - 1995</strong></td><td>'+f.properties.erisk1995m+'</td></tr><tr><td><strong>Erosion Risk - 2000</strong></td><td>'+f.properties.erisk2000m+'</td></tr><tr><td><strong>Erosion Risk - 2005</strong></td><td>'+f.properties.erisk2005m+'</td></tr><tr><td><strong>Erosion Risk - 2010</strong></td><td>'+f.properties.erisk2010m+'</td></tr><tr><td><strong>Erosion Risk - 2015</strong></td><td>'+f.properties.erisk2015m+'</td></tr><tr><td><strong>Erosion Risk - 2020</strong></td><td>'+f.properties.erisk2020m+'</td></tr></table>');
+    }
+    },         
+	style: function(feature) {
+            return {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                color: 'white',
+                fillColor: '#fdae6b'
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                color: 'white',
+                fillColor: '#fdae6b'
+            });
+        }});
+                                    var legend = L.control({position: 'bottomright'});
+            legend.onAdd = function (map) {
+                        var div = L.DomUtil.create('div', 'info legend');
+                labels = ['<strong>Classes</strong>'],
+                categories = ['Very low','Low','Moderate','Severe','Very severe'];
+                var colors = ['#1a9641', '#a6d96a', '#ffffbf', '#fdae61', '#d7191c' ]
+                for (var i = 0; i < categories.length; i++) {
+                    for(var k=0; k < colors.length; k++){
+                        if(i === k){
+                        div.innerHTML += 
+                        labels.push(
+                            '<i style="background:' + colors[k] + '"></i> ' +
+                            (categories[i] ? categories[i] : '+'));
+                        }
+                    }
+                    }
+
+                div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+           
+    
+        shp(file).then(function(data){
+        eFile.addData(data);
+        eFile.addTo(map);
+        map.fitBounds(eFile.getBounds());
+         legend.addTo(map);
+        renderErosionChart(null);
+        });
+
+        //console.log(geo);
+        eFile.addTo(map);
+    } else {
+        map.eachLayer(function (layer) {
+    map.removeLayer(layer);
+});
+CartoDB.addTo(map);
+geo2.addTo(map);
+    var file = '/data/erosion.zip';
+    let fileArr = file.split('-');
+    var originalFile = fileArr[0];
+	 var ef = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                out.push(f.properties)
+        console.log(out);
+       l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>Soil Loss - 1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
+
+        
+    }
+    },         
+	style: function(feature) {
+        var prop;
+        switch(year){
+            case '1995':
+            prop = feature.properties.erisk1995m;
+            break;
+
+            case '2000':
+            prop = feature.properties.erisk2000m;
+            break;
+
+            case '2005':
+            
+            prop = feature.properties.erisk2005m;
+            break;
+
+            case '2010':
+            prop = feature.properties.erisk2010m;
+            break;
+
+            case '2015':
+            prop = feature.properties.erisk2015m;
+            break;
+
+            case '2020':
+            prop = feature.properties.erisk2020m;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return {
+                opacity: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                weight: 1,
+                color: 'white',
+                fillColor: getErosionColor(prop)
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+
+        var prop;
+        switch(year){
+            case '1995':
+            prop = feature.properties.erisk1995m;
+            break;
+
+            case '2000':
+            prop = feature.properties.erisk2000m;
+            break;
+
+            case '2005':
+            prop = feature.properties.erisk2005m;
+            break;
+
+            case '2010':
+            prop = feature.properties.erisk2010m;
+            break;
+
+            case '2015':
+            prop = feature.properties.erisk2015m;
+            break;
+
+            case '2020':
+            prop = feature.properties.erisk2020m;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                color: 'white',
+                fillColor: getErosionColor(prop)
+            });
+        }});
+    
+        shp(file).then(function(data){
+        ef.addData(data);
+        ef.addTo(map);
+        map.fitBounds(ef.getBounds());
+        renderErosionChart(year);
+        });
+
+        //console.log(geo);
+        ef.addTo(map);
+    }
+}
+
+function loadPopulationFile(year){
+    if(year == null){
+    var file = '/data/population.zip';
+
+    let fileArr = file.split('-');
+    var originalFile = fileArr[0];
+	var geo = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                out.push(f.properties)
+        l.bindPopup('<table><tr><td><strong>Name</strong></td><td>'+f.properties.SLNAME+'</td></tr><tr><td><strong>Population - 2000</strong></td><td>'+f.properties.pop2000+'</td></tr><tr><td><strong>Population - 2005</strong></td><td>'+f.properties.pop2005+'</td></tr><tr><td><strong>Population - 2010</strong></td><td>'+f.properties.pop2010+'</td></tr><tr><td><strong>Population - 2015</strong></td><td>'+f.properties.pop2015+'</td></tr><tr><td><strong>Population - 2020</strong></td><td>'+f.properties.pop2020+'</td></tr></table>');
+    }
+    },         
+	style: function(feature) {
+            return {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                color: 'white',
+                fillColor: 'red'
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                color: 'white',
+                fillColor: 'red'
+            });
+        }});
+
+        /*
+    '#bd0026' :
+				p > 5000  ? '#f03b20' :
+				p > 2000  ? '#fd8d3c' :
+				p > 1000   ? '#fecc5c' :
+				p > 500   ? '#ffffb2' :
+					   '#FFEDA0'; 
+        */
+
+                                            var legend = L.control({position: 'bottomright'});
+            legend.onAdd = function (map) {
+                        var div = L.DomUtil.create('div', 'info legend');
+                labels = ['<strong>Classes</strong>'],
+                categories = ['0-500','500-1000','1000-2000','2000-5000','5000-50000', '> 50000'];
+                var colors = ['#FFEDA0', '#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026' ]
+                for (var i = 0; i < categories.length; i++) {
+                    for(var k=0; k < colors.length; k++){
+                        if(i === k){
+                        div.innerHTML += 
+                        labels.push(
+                            '<i style="background:' + colors[k] + '"></i> ' +
+                            (categories[i] ? categories[i] : '+'));
+                        }
+                    }
+                    }
+
+                div.innerHTML = labels.join('<br>');
+                return div;
+            };
+
+    
+        shp(file).then(function(data){
+        geo.addData(data);
+        geo.addTo(map);
+        renderChart('null');
+        map.fitBounds(geo.getBounds());
+        legend.addTo(map);
+        });
+
+        //console.log(geo);
+        geo.addTo(map);
+    
+
+    } else {
+        map.eachLayer(function (layer) {
+    map.removeLayer(layer);
+});
+CartoDB.addTo(map);
+geo2.addTo(map);
+    var file = '/data/population.zip';
+    var popYear = "pop"+year;
+    let fileArr = file.split('-');
+    var originalFile = fileArr[0];
+	 var geo = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                out.push(f.properties)
+
+        l.bindPopup('<table><tr><td><strong>Name</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>Population - 2000</strong></td><td>'+f.properties.pop2000+'</td></tr><tr><td><strong>Population - 2005</strong></td><td>'+f.properties.pop2005+'</td></tr><tr><td><strong>Population - 2010</strong></td><td>'+f.properties.pop2010+'</td></tr><tr><td><strong>Population - 2015</strong></td><td>'+f.properties.pop2015+'</td></tr><tr><td><strong>Population - 2020</strong></td><td>'+f.properties.pop2020+'</td></tr></table>');
+
+        
+    }
+    },         
+	style: function(feature) {
+        var prop;
+        switch(year){
+            case '2000':
+            prop = feature.properties.pop2000;
+            break;
+
+            case '2005':
+            prop = feature.properties.pop2005;
+            break;
+
+            case '2010':
+            prop = feature.properties.pop2010;
+            break;
+
+            case '2015':
+            prop = feature.properties.pop2015;
+            break;
+
+            case '2020':
+            prop = feature.properties.pop2020;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return {
+                opacity: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                weight: 1,
+                color: 'white',
+                fillColor: getColor(prop)
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+
+                    var prop;
+        switch(year){
+            case '2000':
+            prop = feature.properties.pop2000;
+            break;
+
+            case '2005':
+            prop = feature.properties.pop2005;
+            break;
+
+            case '2010':
+            prop = feature.properties.pop2010;
+            break;
+
+            case '2015':
+            prop = feature.properties.pop2015;
+            break;
+
+            case '2020':
+            prop = feature.properties.pop2020;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                color: 'white',
+                fillColor: getColor(prop)
+            });
+        }});
+    
+        shp(file).then(function(data){
+        geo.addData(data);
+        geo.addTo(map);
+        map.fitBounds(geo.getBounds());
+        });
+
+        //console.log(geo);
+        geo.addTo(map);
+
+        // creating a canvas chart
+    renderChart(year);
+    }
+}
+$(document).on('click', '#compare_btn', function(){
+    if(localStorage.getItem('status') == 'population'){
+           var year1 = document.getElementById('year3').value;
+    var year2 = document.getElementById('year4').value;
+
+    compareYears(year1, year2);
+    } else {
+            var year1 = document.getElementById('year1').value;
+    var year2 = document.getElementById('year2').value;
+
+    compareYears(year1, year2);
+    }
+})
+
+function compareYears(year1, year2){
+    let canvas2 = document.getElementById('canvas2');
+    if(localStorage.getItem('status') === 'landcover'){
+var _1995 = new Object();
+_1995.data = [120.60, 966.14, 972.80, 156.58, 13.99, 739.59, 3692.63, 0.67];
+
+var _2000 = new Object();
+_2000.data = [130.59, 2318.06, 600.34, 269.85, 22.65, 678.29, 2639.21, 4.00];
+
+var _2005 = new Object();
+_2005.data = [135.26, 2379.36, 663.63, 135.93, 20.66, 664.97, 2663.20, 0.67];
+
+var _2010 = new Object();
+_2010.data = [143.25, 1559.14, 840.87, 139.26, 2.67, 1429.21, 2547.93, 1.33];
+
+var _2015 = new Object();
+_2015.data = [247.86, 1681.74, 572.35, 206.55, 76.62, 273.85, 3602.02, 2.00];
+
+var _2020 = new Object();
+_2020.data = [206.55, 1620.44, 974.80, 63.30, 32.65, 142.59, 3615.34, 6.66];
+
+var dataset1 = new Object();
+var dataset2 = new Object();
+
+switch(year1){
+    case '1995':
+    dataset1.label = '1995';
+    dataset1.data = _1995.data;
+    dataset1.lineTension = 0;
+    dataset1.fill = false;
+    dataset1.borderColor = 'red';
+    break;
+
+    case '2000':
+     dataset1.label = '2000';
+    dataset1.data = _2000.data;
+    dataset1.lineTension = 0;
+    dataset1.fill = false;
+    dataset1.borderColor = 'red';
+    break;
+
+    case '2005':
+     dataset1.label = '2005';
+    dataset1.data = _2005.data;
+    dataset1.lineTension = 0;
+    dataset1.fill = false;
+    dataset1.borderColor = 'red';
+    break;
+
+    case '2010':
+     dataset1.label = '2010';
+    dataset1.data = _2010.data;
+    dataset1.lineTension = 0;
+    dataset1.fill = false;
+    dataset1.borderColor = 'red';
+    break;
+
+    case '2015':
+     dataset1.label = '2015';
+    dataset1.data = _2015.data;
+    dataset1.lineTension = 0;
+    dataset1.fill = false;
+    dataset1.borderColor = 'red';
+    break;
+
+    case '2020':
+    dataset1.label = '2020';
+    dataset1.data = _2020.data;
+    dataset1.lineTension = 0;
+    dataset1.fill = false;
+    dataset1.borderColor = 'red';
+    break;
+
+    default:
+    console.log("Error!");
+
+}
+
+switch(year2){
+    case '1995':
+     dataset2.label = '1995';
+    dataset2.data = _1995.data;
+    dataset2.lineTension = 0;
+    dataset2.fill = false;
+    dataset2.borderColor = 'blue';
+    break;
+
+    case '2000':
+     dataset2.label = '2000';
+    dataset2.data = _2000.data;
+    dataset2.lineTension = 0;
+    dataset2.fill = false;
+    dataset2.borderColor = 'blue';
+    break;
+
+    case '2005':
+     dataset2.label = '2005';
+    dataset2.data = _2005.data;
+    dataset2.lineTension = 0;
+    dataset2.fill = false;
+    dataset2.borderColor = 'blue';
+    break;
+
+    case '2010':
+     dataset2.label = '2010';
+    dataset2.data = _2010.data;
+    dataset2.lineTension = 0;
+    dataset2.fill = false;
+    dataset2.borderColor = 'blue';
+    break;
+
+    case '2015':
+     dataset2.label = '2015';
+    dataset2.data = _2015.data;
+    dataset2.lineTension = 0;
+    dataset2.fill = false;
+    dataset2.borderColor = 'blue';
+    break;
+
+    case '2020':
+     dataset2.label = '2020';
+    dataset2.data = _2020.data;
+    dataset2.lineTension = 0;
+    dataset2.fill = false;
+    dataset2.borderColor = 'blue';
+    break;
+
+    default:
+    console.log('Error!');
+}
+
+var finaldata = {
+  labels: [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"],
+  datasets: [dataset1, dataset2]
+};
+
+var chartOptions = {
+  legend: {
+    display: true,
+    position: 'top',
+    labels: {
+      boxWidth: 80,
+      fontColor: 'black'
+    }
+  }
+};
+
+var lineChart = new Chart(canvas2, {
+  type: 'line',
+  data: finaldata,
+  options: chartOptions
+});
+    } else if(localStorage.getItem('status') === 'population'){
+        var yValues = [];
+        switch(year1){
+            case '2000':
+            yValues.push(442421);
+            break;
+
+            case '2005':
+            yValues.push(528074);
+            break;
+
+            case '2010':
+            yValues.push(632391);
+            break;
+
+            case '2015':
+            yValues.push(752015);
+            break;
+
+            case '2020':
+            yValues.push(877032);
+            break;
+
+            default:
+            console.log('error!');
+        }
+
+    
+
+        switch(year2){
+            case '2000':
+            yValues.push(442421);
+            break;
+
+            case '2005':
+            yValues.push(528074);
+            break;
+
+            case '2010':
+            yValues.push(632391);
+            break;
+
+            case '2015':
+            yValues.push(752015);
+            break;
+
+            case '2020':
+            yValues.push(877032);
+            break;
+
+            default:
+            console.log('error!');
+        }
+
+            var xValues = [year1, year2];
+            var barColors =  ['red', 'cyan'];
+
+            new Chart(canvas2, {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Population comparison - "+ year1 + " AND "+year2
+                }
+            }
+            });
+    } else {
+         var yValues = [];
+        switch(year1){
+            case '1995':
+            yValues.push(16);
+            break;
+
+            case '2000':
+            yValues.push(1171);
+            break;
+
+            case '2005':
+            yValues.push(1429);
+            break;
+
+            case '2010':
+            yValues.push(1611);
+            break;
+
+            case '2015':
+            yValues.push(1102);
+            break;
+
+            case '2020':
+            yValues.push(1642);
+            break;
+
+            default:
+            console.log('error!');
+        }
+
+    
+
+        switch(year2){
+            case '1995':
+            yValues.push(16);
+            break;
+
+            case '2000':
+            yValues.push(1171);
+            break;
+
+            case '2005':
+            yValues.push(1429);
+            break;
+
+            case '2010':
+            yValues.push(1611);
+            break;
+
+            case '2015':
+            yValues.push(1102);
+            break;
+
+            case '2020':
+            yValues.push(1642);
+            break;
+
+            default:
+            console.log('error!');
+        }
+
+            var xValues = [year1, year2];
+            var barColors =  ['red', 'cyan'];
+
+            new Chart(canvas2, {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Soil Loss comparison - "+ year1 + " AND "+year2
+                }
+            }
+            });
+    }
+}
+
 
 $(function() {
 map = new L.map('map').setView([0.5, 36.819], 6);
 // add basemaps from cartodb - darkmatter.
-var CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
 	attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
 	subdomains:'abcd',
 	minZoom:4,
@@ -596,18 +1960,19 @@ var osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     let fileArr = file.split('-');
     var originalFile = fileArr[0];
 
-	     var geo = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+	     geo2 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
             var out = [];
             if (f.properties){
                 for(var key in f.properties){
                 out.push(key);
         }
-        l.bindPopup(out.join("<br />"));
+        //l.bindPopup(out.join("<br />"));
     }
     },         
 	style: function(feature) {
             return {
                 opacity: 1,
+                weight: 2,
                 fillOpacity: 0.7,
                 radius: 6,
                 color: 'black',
@@ -617,6 +1982,7 @@ var osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
         pointToLayer: function(feature, latlng) {
             return L.circleMarker(latlng, {
                 opacity: 1,
+                weight: 2,
                 fillOpacity: 0.7,
                 color: 'black',
                 fillColor: 'transparent'
@@ -624,13 +1990,13 @@ var osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
         }});
     
         shp(file).then(function(data){
-        geo.addData(data);
-        geo.addTo(map);
-        map.fitBounds(geo.getBounds());
+        geo2.addData(data);
+        geo2.addTo(map);
+        map.fitBounds(geo2.getBounds());
         });
 
         //console.log(geo);
-        geo.addTo(map);
+        geo2.addTo(map);
 
         var baseLayers = {
             "CartoDB": CartoDB,
