@@ -544,7 +544,7 @@ $(function () {
             },
             { id: 'erosion', text: 'Erosion', expanded: false,
                 nodes: [
-                    {id: '1995ee', text: '1995'},
+                    //{id: '1995ee', text: '1995'},
                     {id: '2000ee', text: '2000'},
                     {id:'2005ee', text: '2005'},
                     {id:'2010ee', text: '2010'},
@@ -812,7 +812,7 @@ $(function () {
                 return new Promise(resolve => setTimeout(resolve, milliseconds))
                 }
 
-               var layers = ['1995ee','2000ee', '2005ee', '2010ee', '2015ee', '2020ee'];
+               var layers = ['2000ee', '2005ee', '2010ee', '2015ee', '2020ee'];
 
             const loadData = async () => {
                 for (const item of layers) {
@@ -1212,9 +1212,9 @@ function renderChart(year){
 
 function renderErosionChart(year){
         if(year === null){
-            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors =  ['orange', 'orange', 'orange', 'orange', 'orange', 'orange'];
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [ 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors =  [ 'orange', 'orange', 'orange', 'orange', 'orange'];
                      $('#canvas').remove();
             $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
             document.getElementById('canvas').style.height = '80%';
@@ -1237,44 +1237,11 @@ function renderErosionChart(year){
             });
     } else {
         switch(year){
-            case '1995':
-            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors = ['blue', 'orange', 'orange', 'orange', 'orange', 'orange'];
-            
-                   $('#canvas').remove();
-            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
-            document.getElementById('canvas').style.height = '80%';
-            new Chart("canvas", {
-            type: "bar",
-            data: {
-                labels: xValues,
-                datasets: [{
-                backgroundColor: barColors,
-                data: yValues
-                }]
-            },
-            options: {
-                legend: {display: false},
-                title: {
-                display: true,
-                text: "Average soil loss in L.Baringo basin"
-                }
-            }
-            });
-
-             var div = document.getElementById('pops-no');
-             div.innerHTML = '';
-
-            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>219</center></td></tr><tr><td>Low</td><td><center>0</center></td></tr><tr><td>Moderate</td><td><center>0</center></td></tr><tr><td>Severe</td><td><center>0</center></td></tr><tr><td>Very Severe</td><td><center>0</center></td></tr></tbody></table>'
-
-
-            break;
 
             case '2000':
-            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-           var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors = ['orange', 'blue', 'orange', 'orange', 'orange', 'orange'];
+            var xValues = [ "2000", "2005", "2010", "2015", "2020"];
+           var yValues = [ 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = [ 'blue', 'orange', 'orange', 'orange', 'orange'];
                     $('#canvas').remove();
             $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
             document.getElementById('canvas').style.height = '80%';
@@ -1304,9 +1271,9 @@ function renderErosionChart(year){
             break;
 
             case '2005':
-            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-           var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors = ['orange', 'orange', 'blue', 'orange', 'orange', 'orange'];
+            var xValues = [ "2000", "2005", "2010", "2015", "2020"];
+           var yValues = [ 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = [ 'orange', 'blue', 'orange', 'orange', 'orange'];
                      $('#canvas').remove();
             $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
             document.getElementById('canvas').style.height = '80%';
@@ -1336,9 +1303,9 @@ function renderErosionChart(year){
             break;
 
             case '2010':
-            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors = ['orange', 'orange', 'orange', 'blue', 'orange', 'orange'];
+            var xValues = ["2000", "2005", "2010", "2015", "2020"];
+            var yValues = [ 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = [ 'orange', 'orange', 'blue', 'orange', 'orange'];
                      $('#canvas').remove();
             $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
             document.getElementById('canvas').style.height = '80%';
@@ -1368,9 +1335,9 @@ function renderErosionChart(year){
             break;
 
             case '2015':
-            var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-           var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors = ['orange', 'orange', 'orange', 'orange', 'blue', 'orange'];
+            var xValues = [ "2000", "2005", "2010", "2015", "2020"];
+           var yValues = [5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = [ 'orange', 'orange', 'orange', 'blue', 'orange'];
                     $('#canvas').remove();
             $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
             document.getElementById('canvas').style.height = '80%';
@@ -1401,9 +1368,9 @@ function renderErosionChart(year){
             break;
 
             case '2020':
-                 var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
-            var barColors = ['orange', 'orange', 'orange', 'orange', 'orange', 'blue'];
+                 var xValues = [ "2000", "2005", "2010", "2015", "2020"];
+            var yValues = [ 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = [ 'orange', 'orange', 'orange', 'orange', 'blue'];
          $('#canvas').remove();
             $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
             document.getElementById('canvas').style.height = '80%';
@@ -1437,6 +1404,8 @@ function renderErosionChart(year){
 
 function loadErosionFile(year){
     if(year === null){
+                  w2ui.sidebar.click('2000ee');
+           w2ui.sidebar.select('2000ee');
         var file = '/data/erosion.zip';
 
     let fileArr = file.split('-');
@@ -1494,9 +1463,8 @@ function loadErosionFile(year){
         eFile.addData(data);
         //eFile.addTo(map);
         map.fitBounds(eFile.getBounds());
+               geo2.addTo(map);
          legend.addTo(map);
-          w2ui.sidebar.click('2000ee');
-           w2ui.sidebar.select('2000ee');
         renderErosionChart(null);
         });
 
@@ -1507,7 +1475,6 @@ function loadErosionFile(year){
     map.removeLayer(layer);
 });
 CartoDB.addTo(map);
-geo2.addTo(map);
     var file = '/data/erosion.zip';
     let fileArr = file.split('-');
     var originalFile = fileArr[0];
@@ -1523,9 +1490,7 @@ geo2.addTo(map);
 	style: function(feature) {
         var prop;
         switch(year){
-            case '1995':
-            prop = feature.properties.erisk1995m;
-            break;
+
 
             case '2000':
             prop = feature.properties.erisk2000m;
@@ -1564,9 +1529,6 @@ geo2.addTo(map);
 
         var prop;
         switch(year){
-            case '1995':
-            prop = feature.properties.erisk1995m;
-            break;
 
             case '2000':
             prop = feature.properties.erisk2000m;
@@ -1604,6 +1566,7 @@ geo2.addTo(map);
         ef.addData(data);
         ef.addTo(map);
         map.fitBounds(ef.getBounds());
+        geo2.addTo(map);
         renderErosionChart(year);
         });
 
@@ -1614,6 +1577,8 @@ geo2.addTo(map);
 
 function loadPopulationFile(year){
     if(year == null){
+                 w2ui.sidebar.click('2000p');
+          w2ui.sidebar.select('2000p');
     var file = '/data/population.zip';
 
     let fileArr = file.split('-');
@@ -1674,8 +1639,6 @@ function loadPopulationFile(year){
         legend.addTo(map);
         //geo.addTo(map);
         renderChart('null');
-         w2ui.sidebar.click('2000p');
-          w2ui.sidebar.select('2000p');
         map.fitBounds(geo.getBounds());
         });
 
@@ -1688,7 +1651,6 @@ function loadPopulationFile(year){
     map.removeLayer(layer);
 });
 CartoDB.addTo(map);
-geo2.addTo(map);
     var file = '/data/population.zip';
     var popYear = "pop"+year;
     let fileArr = file.split('-');
@@ -1778,6 +1740,7 @@ geo2.addTo(map);
         geo.addData(data);
         geo.addTo(map);
         map.fitBounds(geo.getBounds());
+        geo2.addTo(map);
         });
 
         //console.log(geo);
