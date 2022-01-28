@@ -568,7 +568,9 @@ $(function () {
            var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
             var yValues = [120.60, 966.14, 972.80, 156.58, 13.99, 739.59, 3692.63, 0.67];
             var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -599,7 +601,9 @@ $(function () {
                        var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
             var yValues = [130.59, 2318.06, 600.34, 269.85, 22.65, 678.29, 2639.21, 4.00];
             var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -632,7 +636,9 @@ $(function () {
             var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
             var yValues = [135.26, 2379.36, 663.63, 135.93, 20.66, 664.97, 2663.20, 0.67];
             var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -664,7 +670,9 @@ $(function () {
             var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
             var yValues = [143.25, 1559.14, 840.87, 139.26, 2.67, 1429.21, 2547.93, 1.33];
             var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -696,7 +704,9 @@ $(function () {
             var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
             var yValues = [247.86, 1681.74, 572.35, 206.55, 76.62, 273.85, 3602.02, 2.00];
             var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -728,7 +738,9 @@ $(function () {
             var xValues = [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"];
             var yValues = [206.55, 1620.44, 974.80, 63.30, 32.65, 142.59, 3615.34, 6.66];
             var barColors =  ['blue', 'yellow', '#4E9F3D', '#191919', '#4C74C9', '#A9C52F', '#F14A16', '#9E9D89'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -848,9 +860,34 @@ if(localStorage.getItem('status') == 'population'){
     w2ui.sidebar.collapse('erosion');
     w2ui.sidebar.expand('population')
     w2ui.sidebar.select('population');
+    
+    var chartdiv =document.getElementById('chart-div');
+    chartdiv.innerHTML = '';
 
-    $('#pop-no').hide();
-    $('#pop-yes').show();
+    var div1 = document.createElement('div');
+    div1.classList = 'col-md-3 col-lg-3';
+
+    var div2 = document.createElement('div');
+    div2.classList = 'col-md-6 col-lg-6';
+    div2.id = 'charts-div2';
+
+    var div3 = document.createElement('div');
+    div3.classList = 'col-md-3 col-lg-3';
+
+    chartdiv.appendChild(div1);
+    chartdiv.appendChild(div2);
+    chartdiv.appendChild(div3);
+
+    var p = document.createElement('p');
+    p.innerHTML = 'Yearly population statistics';
+    div2.appendChild(p);
+
+    var canvas = document.createElement('canvas');
+    canvas.id = 'canvas';
+    canvas.style.background = '#fff';
+    canvas.style.width = '100%';
+
+    div2.appendChild(canvas);
 
     // adding population vector files.
     loadPopulationFile(null)
@@ -864,7 +901,6 @@ if(localStorage.getItem('status') == 'landcover'){
     w2ui.sidebar.select('land');
 
     $('#pop-no').show();
-    $('#pop-yes').hide();
 
             map.eachLayer(function (layer) {
     map.removeLayer(layer);
@@ -879,9 +915,9 @@ if(localStorage.getItem('status') == 'erosion'){
     w2ui.sidebar.expand('erosion');
     w2ui.sidebar.select('erosion');
 
-    $('#pop-no').show();
-    $('#pop-yes').hide();
-
+   // $('#pop-no').show();
+   var div = document.getElementById('pops-no');
+   div.innerHTML = '';
     loadErosionFile(null);
 }
 	//w2ui.sidebar.click('land');
@@ -897,6 +933,7 @@ function getColor(p){
 }
 
 function getErosionColor(p){
+
     return p > 10 ? '#d7191c' :
 				p > 5  ? '#fdae61' :
 				p > 2  ? '#ffffbf' :
@@ -904,12 +941,15 @@ function getErosionColor(p){
 					   '#1a9641';   
 }
 
+
 function renderChart(year){
     if(year == 'null'){
             var xValues = ["2000", "2005", "2010", "2015", "2020"];
             var yValues = [442421, 528074, 632391, 752015, 877032];
             var barColors =  ['cyan', 'cyan', 'cyan', 'cyan', 'cyan'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -933,7 +973,9 @@ function renderChart(year){
             var xValues = ["2000", "2005", "2010", "2015", "2020"];
             var yValues = [442421, 528074, 632391, 752015, 877032];
             var barColors =  ['red', 'cyan', 'cyan', 'cyan', 'cyan'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -951,8 +993,6 @@ function renderChart(year){
                 }
             }
             });
-
-            compareYears('2000', '2020');
 
             break;
 
@@ -960,7 +1000,9 @@ function renderChart(year){
             var xValues = ["2000", "2005", "2010", "2015", "2020"];
             var yValues = [442421, 528074, 632391, 752015, 877032];
             var barColors =  ['cyan', 'red', 'cyan', 'cyan', 'cyan'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -978,8 +1020,6 @@ function renderChart(year){
                 }
             }
             });
-
-            compareYears('2005', '2020');
 
             break;
 
@@ -987,7 +1027,9 @@ function renderChart(year){
             var xValues = ["2000", "2005", "2010", "2015", "2020"];
             var yValues = [442421, 528074, 632391, 752015, 877032];
             var barColors =  ['cyan', 'cyan', 'red', 'cyan', 'cyan'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1005,8 +1047,6 @@ function renderChart(year){
                 }
             }
             });
-
-            compareYears('2010', '2020');
 
             break;
 
@@ -1014,7 +1054,9 @@ function renderChart(year){
             var xValues = ["2000", "2005", "2010", "2015", "2020"];
             var yValues = [442421, 528074, 632391, 752015, 877032];
             var barColors =  ['cyan', 'cyan', 'cyan', 'red', 'cyan'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1032,8 +1074,6 @@ function renderChart(year){
                 }
             }
             });
-
-            compareYears('2015', '2020');
 
             break;
 
@@ -1041,7 +1081,9 @@ function renderChart(year){
             var xValues = ["2000", "2005", "2010", "2015", "2020"];
             var yValues = [442421, 528074, 632391, 752015, 877032];
             var barColors =  ['cyan', 'cyan', 'cyan', 'cyan', 'red'];
-
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1059,8 +1101,6 @@ function renderChart(year){
                 }
             }
             });
-
-            compareYears('2020', '2000');
 
             break;
         }
@@ -1070,9 +1110,11 @@ function renderChart(year){
 function renderErosionChart(year){
         if(year === null){
             var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors =  ['#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c'];
-
+            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors =  ['orange', 'orange', 'orange', 'orange', 'orange', 'orange'];
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1094,9 +1136,12 @@ function renderErosionChart(year){
         switch(year){
             case '1995':
             var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors = ['cyan', '#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c'];
-
+            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = ['blue', 'orange', 'orange', 'orange', 'orange', 'orange'];
+            
+                   $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1110,20 +1155,26 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Baringo Soil Loss Changes(2000-2020)"
                 }
             }
             });
 
-            compareYears('1995', '2020');
+             var div = document.getElementById('pops-no');
+             div.innerHTML = '';
+
+            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>219</center></td></tr><tr><td>Low</td><td><center>0</center></td></tr><tr><td>Moderate</td><td><center>0</center></td></tr><tr><td>Severe</td><td><center>0</center></td></tr><tr><td>Very Severe</td><td><center>0</center></td></tr></tbody></table>'
+
 
             break;
 
             case '2000':
             var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors = ['#d7191c', 'cyan', '#d7191c', '#d7191c', '#d7191c', '#d7191c'];
-
+           var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = ['orange', 'blue', 'orange', 'orange', 'orange', 'orange'];
+                    $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1137,20 +1188,25 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Baringo Soil Loss Changes(2000-2020)"
                 }
             }
             });
 
-            compareYears('2000', '2020');
+         var div = document.getElementById('pops-no');
+             div.innerHTML = '';
+
+            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>6</center></td></tr><tr><td>Low</td><td><center>46</center></td></tr><tr><td>Moderate</td><td><center>68</center></td></tr><tr><td>Severe</td><td><center>75</center></td></tr><tr><td>Very Severe</td><td><center>24</center></td></tr></tbody></table>'
 
             break;
 
             case '2005':
             var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors = ['#d7191c', '#d7191c', 'cyan', '#d7191c', '#d7191c', '#d7191c'];
-
+           var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = ['orange', 'orange', 'blue', 'orange', 'orange', 'orange'];
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1164,20 +1220,25 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Baringo Soil Loss Changes(2000-2020)"
                 }
             }
             });
 
-            compareYears('2005', '2020');
+             var div = document.getElementById('pops-no');
+             div.innerHTML = '';
+
+            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>5</center></td></tr><tr><td>Low</td><td><center>32</center></td></tr><tr><td>Moderate</td><td><center>73</center></td></tr><tr><td>Severe</td><td><center>65</center></td></tr><tr><td>Very Severe</td><td><center>44</center></td></tr></tbody></table>'
 
             break;
 
             case '2010':
             var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors = ['#d7191c', '#d7191c', '#d7191c', 'cyan', '#d7191c', '#d7191c'];
-
+            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = ['orange', 'orange', 'orange', 'blue', 'orange', 'orange'];
+                     $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1191,20 +1252,25 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Baringo Soil Loss Changes(2000-2020)"
                 }
             }
             });
 
-            compareYears('2010', '2020');
+             var div = document.getElementById('pops-no');
+             div.innerHTML = '';
+
+            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>2</center></td></tr><tr><td>Low</td><td><center>26</center></td></tr><tr><td>Moderate</td><td><center>75</center></td></tr><tr><td>Severe</td><td><center>64</center></td></tr><tr><td>Very Severe</td><td><center>52</center></td></tr></tbody></table>'
 
             break;
 
             case '2015':
             var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors = ['#d7191c', '#d7191c', '#d7191c', '#d7191c', 'cyan', '#d7191c'];
-
+           var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = ['orange', 'orange', 'orange', 'orange', 'blue', 'orange'];
+                    $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1218,20 +1284,26 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Baringo Soil Loss Changes(2000-2020)"
                 }
             }
             });
 
-            compareYears('2015', '2020');
+             var div = document.getElementById('pops-no');
+             div.innerHTML = '';
+
+            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>12</center></td></tr><tr><td>Low</td><td><center>34</center></td></tr><tr><td>Moderate</td><td><center>90</center></td></tr><tr><td>Severe</td><td><center>64</center></td></tr><tr><td>Very Severe</td><td><center>19</center></td></tr></tbody></table>'
+
 
             break;
 
             case '2020':
                  var xValues = ["1995", "2000", "2005", "2010", "2015", "2020"];
-            var yValues = [16, 1171, 1429, 1611, 1102, 1642];
-            var barColors = ['#d7191c', '#d7191c', '#d7191c', '#d7191c', '#d7191c', 'cyan'];
-
+            var yValues = [0.07, 5.35, 6.53, 7.36, 5.03, 7.50];
+            var barColors = ['orange', 'orange', 'orange', 'orange', 'orange', 'blue'];
+         $('#canvas').remove();
+            $('#charts-div2').append('<canvas id="canvas" style="background-color: #fff;width: 100%;"></canvas>');
+            document.getElementById('canvas').style.height = '80%';
             new Chart("canvas", {
             type: "bar",
             data: {
@@ -1245,11 +1317,15 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Baringo Soil Loss Changes(2000-2020)"
                 }
             }
             });
-            compareYears('2020', '2000');
+
+             var div = document.getElementById('pops-no');
+             div.innerHTML = '';
+
+            div.innerHTML = '<table class="table" style="margin-top: 40px; width: 95%; height: 70%;"><thead><tr><td><strong>Class</strong></td><td><strong>Number of Constituencies</strong></td></tr></thead><tbody><tr><td>Very Low</td><td><center>7</center></td></tr><tr><td>Low</td><td><center>20</center></td></tr><tr><td>Moderate</td><td><center>74</center></td></tr><tr><td>Severe</td><td><center>58</center></td></tr><tr><td>Very Severe</td><td><center>60</center></td></tr></tbody></table>'
 
             break;
         }
@@ -1266,7 +1342,6 @@ function loadErosionFile(year){
             var out = [];
             if (f.properties){
                 out.push(f.properties)
-                console.log(out);
         l.bindPopup('<table><tr><td><strong>Name</strong></td><td>'+f.properties.SLNAME+'</td></tr><tr><td><strong>Erosion Risk - 1995</strong></td><td>'+f.properties.erisk1995m+'</td></tr><tr><td><strong>Erosion Risk - 2000</strong></td><td>'+f.properties.erisk2000m+'</td></tr><tr><td><strong>Erosion Risk - 2005</strong></td><td>'+f.properties.erisk2005m+'</td></tr><tr><td><strong>Erosion Risk - 2010</strong></td><td>'+f.properties.erisk2010m+'</td></tr><tr><td><strong>Erosion Risk - 2015</strong></td><td>'+f.properties.erisk2015m+'</td></tr><tr><td><strong>Erosion Risk - 2020</strong></td><td>'+f.properties.erisk2020m+'</td></tr></table>');
     }
     },         
@@ -1314,7 +1389,7 @@ function loadErosionFile(year){
     
         shp(file).then(function(data){
         eFile.addData(data);
-        eFile.addTo(map);
+        //eFile.addTo(map);
         map.fitBounds(eFile.getBounds());
          legend.addTo(map);
         renderErosionChart(null);
@@ -1335,7 +1410,6 @@ geo2.addTo(map);
             var out = [];
             if (f.properties){
                 out.push(f.properties)
-        console.log(out);
        l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>Soil Loss - 1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
 
         
@@ -1453,7 +1527,7 @@ function loadPopulationFile(year){
                 fillOpacity: 0.7,
                 radius: 6,
                 color: 'white',
-                fillColor: 'red'
+                fillColor: 'transparent'
             }
         },
         pointToLayer: function(feature, latlng) {
@@ -1462,24 +1536,17 @@ function loadPopulationFile(year){
                 weight: 1,
                 fillOpacity: 0.7,
                 color: 'white',
-                fillColor: 'red'
+                fillColor: 'transparent'
             });
         }});
 
-        /*
-    '#bd0026' :
-				p > 5000  ? '#f03b20' :
-				p > 2000  ? '#fd8d3c' :
-				p > 1000   ? '#fecc5c' :
-				p > 500   ? '#ffffb2' :
-					   '#FFEDA0'; 
-        */
 
-                                            var legend = L.control({position: 'bottomright'});
+
+             var legend = L.control({position: 'bottomright'});
             legend.onAdd = function (map) {
                         var div = L.DomUtil.create('div', 'info legend');
                 labels = ['<strong>Classes</strong>'],
-                categories = ['0-500','500-1000','1000-2000','2000-5000','5000-50000', '> 50000'];
+                categories = ['< 500','500-1000','1000-2000','2000-5000','5000-50000', '> 50000'];
                 var colors = ['#FFEDA0', '#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026' ]
                 for (var i = 0; i < categories.length; i++) {
                     for(var k=0; k < colors.length; k++){
@@ -1499,10 +1566,10 @@ function loadPopulationFile(year){
     
         shp(file).then(function(data){
         geo.addData(data);
-        geo.addTo(map);
+        legend.addTo(map);
+        //geo.addTo(map);
         renderChart('null');
         map.fitBounds(geo.getBounds());
-        legend.addTo(map);
         });
 
         //console.log(geo);
@@ -1628,28 +1695,30 @@ $(document).on('click', '#compare_btn', function(){
 })
 
 function compareYears(year1, year2){
-    let canvas2 = document.getElementById('canvas2');
+$('#canvas2').remove();
+$('#pops-no').append('<canvas id="canvas2" style="background-color: #fff;width: 100%;"></canvas>');
+document.getElementById('canvas2').style.height = '68%';
     if(localStorage.getItem('status') === 'landcover'){
-var _1995 = new Object();
+let _1995 = new Object();
 _1995.data = [120.60, 966.14, 972.80, 156.58, 13.99, 739.59, 3692.63, 0.67];
 
-var _2000 = new Object();
+let _2000 = new Object();
 _2000.data = [130.59, 2318.06, 600.34, 269.85, 22.65, 678.29, 2639.21, 4.00];
 
-var _2005 = new Object();
+let _2005 = new Object();
 _2005.data = [135.26, 2379.36, 663.63, 135.93, 20.66, 664.97, 2663.20, 0.67];
 
-var _2010 = new Object();
+let _2010 = new Object();
 _2010.data = [143.25, 1559.14, 840.87, 139.26, 2.67, 1429.21, 2547.93, 1.33];
 
-var _2015 = new Object();
+let _2015 = new Object();
 _2015.data = [247.86, 1681.74, 572.35, 206.55, 76.62, 273.85, 3602.02, 2.00];
 
-var _2020 = new Object();
+let _2020 = new Object();
 _2020.data = [206.55, 1620.44, 974.80, 63.30, 32.65, 142.59, 3615.34, 6.66];
 
-var dataset1 = new Object();
-var dataset2 = new Object();
+let dataset1 = new Object();
+let dataset2 = new Object();
 
 switch(year1){
     case '1995':
@@ -1758,12 +1827,12 @@ switch(year2){
     console.log('Error!');
 }
 
-var finaldata = {
+let finaldata = {
   labels: [" Water Body", "CropLand", "Forestland", "Settlement", "Vegetated Wetland", "Open Grassland", "Wooded Grassland", "Others"],
   datasets: [dataset1, dataset2]
 };
 
-var chartOptions = {
+let chartOptions = {
   legend: {
     display: true,
     position: 'top',
@@ -1774,7 +1843,7 @@ var chartOptions = {
   }
 };
 
-var lineChart = new Chart(canvas2, {
+let lineChart = new Chart(canvas2, {
   type: 'line',
   data: finaldata,
   options: chartOptions
@@ -1833,8 +1902,8 @@ var lineChart = new Chart(canvas2, {
             console.log('error!');
         }
 
-            var xValues = [year1, year2];
-            var barColors =  ['red', 'cyan'];
+            let xValues = [year1, year2];
+            let barColors =  ['red', 'cyan'];
 
             new Chart(canvas2, {
             type: "bar",
