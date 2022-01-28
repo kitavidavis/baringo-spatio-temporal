@@ -892,6 +892,7 @@ if(localStorage.getItem('status') == 'population'){
     // adding population vector files.
     loadPopulationFile(null)
     renderChart(null);
+     w2ui.sidebar.click('2000p');
 }
 
 if(localStorage.getItem('status') == 'landcover'){
@@ -919,6 +920,8 @@ if(localStorage.getItem('status') == 'erosion'){
    var div = document.getElementById('pops-no');
    div.innerHTML = '';
     loadErosionFile(null);
+
+     w2ui.sidebar.click('2000ee');
 }
 	//w2ui.sidebar.click('land');
 });
@@ -959,11 +962,27 @@ function renderChart(year){
                 data: yValues
                 }]
             },
+            borderWidth: 1,
             options: {
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Yearly total population in L.Baringo basin"
+                },
+                                scales: {
+                    yAxes: [
+                    {
+                        ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if ((value % 100000) === 0 ) {
+                                return value;
+                            }
+                        }
+                    }
+                    }
+                    ]
                 }
             }
             });
@@ -985,11 +1004,27 @@ function renderChart(year){
                 data: yValues
                 }]
             },
+            borderWidth: 1,
             options: {
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Yearly total population in L.Baringo basin"
+                },
+                scales: {
+                    yAxes: [
+                    {
+                        ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if ((value % 100000) === 0 ) {
+                                return value;
+                            }
+                        }
+                    }
+                    }
+                    ]
                 }
             }
             });
@@ -1012,11 +1047,27 @@ function renderChart(year){
                 data: yValues
                 }]
             },
+            borderWidth: 1,
             options: {
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Yearly total population in L.Baringo basin"
+                },
+                                scales: {
+                    yAxes: [
+                    {
+                        ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if ((value % 100000) === 0 ) {
+                                return value;
+                            }
+                        }
+                    }
+                    }
+                    ]
                 }
             }
             });
@@ -1039,11 +1090,27 @@ function renderChart(year){
                 data: yValues
                 }]
             },
+            borderWidth: 1,
             options: {
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Yearly total population in L.Baringo basin"
+                },
+                                scales: {
+                    yAxes: [
+                    {
+                        ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if ((value % 100000) === 0 ) {
+                                return value;
+                            }
+                        }
+                    }
+                    }
+                    ]
                 }
             }
             });
@@ -1066,11 +1133,27 @@ function renderChart(year){
                 data: yValues
                 }]
             },
+            borderWidth: 1,
             options: {
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Yearly total population in L.Baringo basin"
+                },
+                                scales: {
+                    yAxes: [
+                    {
+                        ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if ((value % 100000) === 0 ) {
+                                return value;
+                            }
+                        }
+                    }
+                    }
+                    ]
                 }
             }
             });
@@ -1093,11 +1176,27 @@ function renderChart(year){
                 data: yValues
                 }]
             },
+            borderWidth: 1,
             options: {
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Population Changes(2000-2020)"
+                text: "Yearly total population in L.Baringo basin"
+                },
+                                scales: {
+                    yAxes: [
+                    {
+                        ticks: {
+                        min: 0, // it is for ignoring negative step.
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            if ((value % 100000) === 0 ) {
+                                return value;
+                            }
+                        }
+                    }
+                    }
+                    ]
                 }
             }
             });
@@ -1128,7 +1227,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss(1995-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1155,7 +1254,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss Changes(2000-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1188,7 +1287,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss Changes(2000-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1220,7 +1319,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss Changes(2000-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1252,7 +1351,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss Changes(2000-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1284,7 +1383,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss Changes(2000-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1317,7 +1416,7 @@ function renderErosionChart(year){
                 legend: {display: false},
                 title: {
                 display: true,
-                text: "Baringo Soil Loss Changes(2000-2020)"
+                text: "Average soil loss in L.Baringo basin"
                 }
             }
             });
@@ -1392,6 +1491,8 @@ function loadErosionFile(year){
         //eFile.addTo(map);
         map.fitBounds(eFile.getBounds());
          legend.addTo(map);
+          w2ui.sidebar.click('2000ee');
+           w2ui.sidebar.select('2000ee');
         renderErosionChart(null);
         });
 
@@ -1410,7 +1511,7 @@ geo2.addTo(map);
             var out = [];
             if (f.properties){
                 out.push(f.properties)
-       l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>Soil Loss - 1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong>Soil Loss - 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
+       l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong> 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong> 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong> 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
 
         
     }
@@ -1569,6 +1670,8 @@ function loadPopulationFile(year){
         legend.addTo(map);
         //geo.addTo(map);
         renderChart('null');
+         w2ui.sidebar.click('2000p');
+          w2ui.sidebar.select('2000p');
         map.fitBounds(geo.getBounds());
         });
 
@@ -1591,7 +1694,7 @@ geo2.addTo(map);
             if (f.properties){
                 out.push(f.properties)
 
-        l.bindPopup('<table><tr><td><strong>Name</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>Population - 2000</strong></td><td>'+f.properties.pop2000+'</td></tr><tr><td><strong>Population - 2005</strong></td><td>'+f.properties.pop2005+'</td></tr><tr><td><strong>Population - 2010</strong></td><td>'+f.properties.pop2010+'</td></tr><tr><td><strong>Population - 2015</strong></td><td>'+f.properties.pop2015+'</td></tr><tr><td><strong>Population - 2020</strong></td><td>'+f.properties.pop2020+'</td></tr></table>');
+        l.bindPopup('<table><tr><td><strong>Sublocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>2000</strong></td><td>'+Math.round(f.properties.pop2000)+'</td></tr><tr><td><strong>2005</strong></td><td>'+Math.round(f.properties.pop2005)+'</td></tr><tr><td><strong>2010</strong></td><td>'+Math.round(f.properties.pop2010)+'</td></tr><tr><td><strong>2015</strong></td><td>'+Math.round(f.properties.pop2015)+'</td></tr><tr><td><strong>2020</strong></td><td>'+Math.round(f.properties.pop2020)+'</td></tr></table>');
 
         
     }
