@@ -1616,8 +1616,8 @@ function loadPopulationFile(year){
             legend.onAdd = function (map) {
                         var div = L.DomUtil.create('div', 'info legend');
                 labels = ['<strong>Classes</strong>'],
-                categories = ['< 500','500-1000','1000-2000','2000-5000','5000-50000', '> 50000'];
-                var colors = ['#FFEDA0', '#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026' ]
+                categories = ['< 500','500-1000','1000-2000','2000-5000','5000-50000'];
+                var colors = [ '#ffffb2', '#fecc5c', '#fd8d3c', '#f03b20', '#bd0026' ]
                 for (var i = 0; i < categories.length; i++) {
                     for(var k=0; k < colors.length; k++){
                         if(i === k){
