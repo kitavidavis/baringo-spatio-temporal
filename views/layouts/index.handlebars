@@ -109,11 +109,19 @@ crossorigin=""></script>
 <script src="https://unpkg.com/georaster"></script>
 <script src="https://unpkg.com/proj4"></script>
 <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+<Script src="/js/leaflet-side-by-side.js"></Script>
 <script type="text/javascript">
 
 var map;
 var CartoDB;
+var osm;
 var geo2;
+var lc;
+var sbs;
+
+// compariosn
+let map1;
+let map2;
 
 $('#chart-div').show();
 //==========================
@@ -234,7 +242,7 @@ async function loadOne(){
             reader.onloadend = function() {
             let arrayBuffer = reader.result;
             parseGeoraster(arrayBuffer).then(georaster => {
-
+               
             /*
                 GeoRasterLayer is an extension of GridLayer,
                 which means can use GridLayer options like opacity.
@@ -412,7 +420,7 @@ async function loadSix(){
             reader.onloadend = function() {
             let arrayBuffer = reader.result;
             parseGeoraster(arrayBuffer).then(georaster => {
-
+                 
             /*
                 GeoRasterLayer is an extension of GridLayer,
                 which means can use GridLayer options like opacity.
@@ -529,7 +537,9 @@ $(function () {
                             { id: '2010l', text: '2010'},
 		                    { id: '2015l', text: '2015'},
                             { id: '2020l', text: '2020'},
+                            { id: 'compare-land', text: 'Compare'},
                             { id: 'animate', text: 'Play changes', icon:"fa fa-video"}
+                            
 						]
             },
             { id: 'population', text: 'Population',expanded: false, 
@@ -539,6 +549,7 @@ $(function () {
                     {id: '2010p', text: '2010'},
                     {id: '2015p', text: '2015'},
                     {id: '2020p', text: '2020'},
+                    { id: 'compare-popz', text: 'Compare'},
                     { id: 'animate-population', text: 'Play changes', icon:"fa fa-video"}
                 ]
             },
@@ -550,7 +561,9 @@ $(function () {
                     {id:'2010ee', text: '2010'},
                     {id: '2015ee', text: '2015'},
                     {id: '2020ee', text: '2020'},
+                          { id: 'compare-erosion', text: 'Compare'},
                     {id: 'animate_risk', text: 'Play changes', icon: 'fa fa-video'}
+              
                 ]
             }
             
@@ -558,8 +571,11 @@ $(function () {
         onClick: async function(event){
 			//$('#main').hide();
 			//$('#sub').show();
-
 			var category = event.target;
+
+            $('#map-comparison').hide();
+            $('#chart-div').show();
+            $('#map').show();
 
             if(category[category.length - 1] === 'l'){
             var a = category.slice(0, -1);
@@ -827,7 +843,7 @@ $(function () {
             if(category[category.length - 1] === 'p') {
             var a = category.slice(0, -1); 
 
-            loadPopulationFile(a);
+            loadPopulationFile(a, 'panel');
 
             }
 
@@ -856,8 +872,611 @@ $(function () {
                 window.location.reload();
             }
 
+            if(category === 'compare-land'){
+               /* map.eachLayer(function (layer) {
+                    map.removeLayer(layer);
+                });
+                L.control.sideBySide(osm, CartoDB).addTo(map); */
+            }
+
+            if(category === 'compare-popz'){
+               
+                w2ui.sidebar.unselect('compare-popz');
+    if (!w2ui.foo3) {
+        $().w2form({
+            name: 'foo3',
+            style: 'border: 0px; background-color: transparent;',
+            fields: [
+                { field: 'left-year', type: 'list', required: true, html: { label: 'Left Panel' }, options: {
+                    items: ['2000', '2005', '2010', '2015', '2020']} },
+               { field: 'right-year', type: 'list', required: true, html: { label: 'Right Panel' }, options: {
+                   items: ['2000', '2005', '2010', '2015', '2020' ]} }
+            ],
+            actions: {
+                "Reset": function () { this.clear(); },
+                "Save": function (event) { 
+                    var errors = this.validate();
+                    if(errors.length === 0){
+                        w2popup.close();
+                        $('#map').hide();
+                        $('#chart-div').hide();
+                        $('#map-comparison').show();
+
+                        $(window).on("resize", function () { $("#map1").height($(window).height() ); }).trigger("resize");
+                        $(window).on("resize", function () { $("#map2").height($(window).height() ); }).trigger("resize");
+
+                      if(map1 == null){
+                            map1 = new L.map('map1').setView([0.5, 36.819], 6);
+                      }
+                       
+                       if(map2 == null){
+                            map2 = new L.map('map2').setView([0.5, 36.819], 6);
+                       }
+
+                                map1.eachLayer(function (layer) {
+                                map1.removeLayer(layer);
+                            });
+
+                                                            map2.eachLayer(function (layer) {
+                                map2.removeLayer(layer);
+                            });
+
+                       CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+	attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
+	subdomains:'abcd',
+	minZoom:4,
+	maxZoom:21
+}).addTo(map1);
+                       CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+	attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
+	subdomains:'abcd',
+	minZoom:4,
+	maxZoom:21
+}).addTo(map2);
+
+var year1 = '';
+var year2 = '';
+
+year1 = $('#left-year').val();
+year2 = $('#right-year').val();
+
+document.getElementById('header-left').innerHTML = year1;
+document.getElementById('header-right').innerHTML = year2;
+
+
+    var file = '/data/population.zip';
+    var popYear = "pop"+year1;
+    w2ui.sidebar.select(year1+'p');
+    var fileArr = file.split('-');
+    var originalFile = fileArr[0];
+	 var geo = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                out.push(f.properties)
+
+        l.bindPopup('<table><tr><td><strong>Sublocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>2000</strong></td><td>'+Math.round(f.properties.pop2000)+'</td></tr><tr><td><strong>2005</strong></td><td>'+Math.round(f.properties.pop2005)+'</td></tr><tr><td><strong>2010</strong></td><td>'+Math.round(f.properties.pop2010)+'</td></tr><tr><td><strong>2015</strong></td><td>'+Math.round(f.properties.pop2015)+'</td></tr><tr><td><strong>2020</strong></td><td>'+Math.round(f.properties.pop2020)+'</td></tr></table>');
+
+        
+    }
+    },         
+	style: function(feature) {
+        var prop;
+        switch(year1){
+            case '2000':
+            prop = feature.properties.pop2000;
+            break;
+
+            case '2005':
+            prop = feature.properties.pop2005;
+            break;
+
+            case '2010':
+            prop = feature.properties.pop2010;
+            break;
+
+            case '2015':
+            prop = feature.properties.pop2015;
+            break;
+
+            case '2020':
+            prop = feature.properties.pop2020;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return {
+                opacity: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                weight: 1,
+                color: 'white',
+                fillColor: getColor(prop)
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+
+                    var prop;
+        switch(year1){
+            case '2000':
+            prop = feature.properties.pop2000;
+            break;
+
+            case '2005':
+            prop = feature.properties.pop2005;
+            break;
+
+            case '2010':
+            prop = feature.properties.pop2010;
+            break;
+
+            case '2015':
+            prop = feature.properties.pop2015;
+            break;
+
+            case '2020':
+            prop = feature.properties.pop2020;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                color: 'white',
+                fillColor: getColor(prop)
+            });
+        }});
+    
+        shp(file).then(function(data){
+        geo.addData(data);
+        geo.addTo(map1);
+        map1.fitBounds(geo2.getBounds());
+        });
+
+        //console.log(geo);
+        geo.addTo(map1);
+
+        // creating a canvas chart
+    //renderChart(year1);
+// end of left year
+
+
+var file = '/data/population.zip';
+    var popYear = "pop"+year2;
+    w2ui.sidebar.select(year2+'p');
+    var fileArr = file.split('-');
+    var originalFile = fileArr[0];
+	 var geo3 = L.geoJson({features:[]},{onEachFeature:function popUp(f,layer){
+            var out = [];
+            if (f.properties){
+                out.push(f.properties)
+
+        layer.bindPopup('<table><tr><td><strong>Sublocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>2000</strong></td><td>'+Math.round(f.properties.pop2000)+'</td></tr><tr><td><strong>2005</strong></td><td>'+Math.round(f.properties.pop2005)+'</td></tr><tr><td><strong>2010</strong></td><td>'+Math.round(f.properties.pop2010)+'</td></tr><tr><td><strong>2015</strong></td><td>'+Math.round(f.properties.pop2015)+'</td></tr><tr><td><strong>2020</strong></td><td>'+Math.round(f.properties.pop2020)+'</td></tr></table>');
+
+        
+    }
+    },         
+	style: function(feature) {
+        var prop;
+        switch(year2){
+            case '2000':
+            prop = feature.properties.pop2000;
+            break;
+
+            case '2005':
+            prop = feature.properties.pop2005;
+            break;
+
+            case '2010':
+            prop = feature.properties.pop2010;
+            break;
+
+            case '2015':
+            prop = feature.properties.pop2015;
+            break;
+
+            case '2020':
+            prop = feature.properties.pop2020;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return {
+                opacity: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                weight: 1,
+                color: 'white',
+                fillColor: getColor(prop)
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+
+                    var prop;
+        switch(year2){
+            case '2000':
+            prop = feature.properties.pop2000;
+            break;
+
+            case '2005':
+            prop = feature.properties.pop2005;
+            break;
+
+            case '2010':
+            prop = feature.properties.pop2010;
+            break;
+
+            case '2015':
+            prop = feature.properties.pop2015;
+            break;
+
+            case '2020':
+            prop = feature.properties.pop2020;
+            break;
+
+            default:
+            console.log('Error!');
+        }
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                color: 'white',
+                fillColor: getColor(prop)
+            });
+        }});
+    
+        shp(file).then(function(data){
+        geo3.addData(data);
+        geo3.addTo(map2);
+        map2.fitBounds(geo3.getBounds());
+        });
+
+        //console.log(geo);
+        geo3.addTo(map2);
+
+        // creating a canvas chart
+    //renderChart(year2);
+// end of right year
+                    }
+                    }
+            }
+        });
+    }
+    w2popup.open({
+        title   : 'Population comparison',
+        body    : '<div id="form3" style="width: 100%; height: 100%;"></div>',
+        style   : 'padding: 15px 0px 0px 0px',
+        width   : 500,
+        height  : 280,
+        showMax : true,
+        onToggle: function (event) {
+            $(w2ui.foo3.box).hide();
+            event.onComplete = function () {
+                $(w2ui.foo3.box).show();
+                w2ui.foo3.resize();
+            }
+        },
+        onOpen: function (event) {
+            event.onComplete = function () {
+                // specifying an onOpen handler instead is equivalent to specifying an onBeforeOpen handler, which would make this code execute too early and hence not deliver.
+                $('#w2ui-popup #form3').w2render('foo3');
+            }
         }
     });
+                
+            }
+
+if(category === 'compare-erosion'){
+    if (!w2ui.foo2) {
+        $().w2form({
+            name: 'foo2',
+            style: 'border: 0px; background-color: transparent;',
+            fields: [
+                { field: 'left-year', type: 'list', required: true, html: { label: 'Left Panel' }, options: {
+                    items: ['2000', '2005', '2010', '2015', '2020']} },
+               { field: 'right-year', type: 'list', required: true, html: { label: 'Right Panel' }, options: {
+                   items: ['2000', '2005', '2010', '2015', '2020' ]} }
+            ],
+            actions: {
+                "Reset": function () { this.clear(); },
+            
+               "Save": function (event) { 
+                    event.preventDefault();
+                    
+                    var errors = this.validate();
+                    if(errors.length === 0){
+                            w2popup.close();
+                            $('#map').hide();
+                            $('#chart-div').hide();
+                            $('#map-comparison').show();
+
+                            $(window).on("resize", function () { $("#map1").height($(window).height() ); }).trigger("resize");
+                            $(window).on("resize", function () { $("#map2").height($(window).height() ); }).trigger("resize");
+
+                                             if(map1 == null){
+                            map1 = new L.map('map1').setView([0.5, 36.819], 6);
+                            }
+                       
+                            if(map2 == null){
+                            map2 = new L.map('map2').setView([0.5, 36.819], 6);
+                            }
+
+                                map1.eachLayer(function (layer) {
+                                map1.removeLayer(layer);
+                            });
+
+                                                            map2.eachLayer(function (layer) {
+                                map2.removeLayer(layer);
+                            });
+                                        CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+                            attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
+                            subdomains:'abcd',
+                            minZoom:4,
+                            maxZoom:21
+                         }).addTo(map1);
+                                        CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+                            attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
+                            subdomains:'abcd',
+                            minZoom:4,
+                            maxZoom:21
+                            }).addTo(map2);
+
+                            var year1 = $('#left-year').val();
+                            var year2 = $('#right-year').val();
+
+                            document.getElementById('header-left').innerHTML = year1;
+                            document.getElementById('header-right').innerHTML = year2;
+
+                            this.clear();
+
+                            var file = '/data/erosion.zip';
+                            var fileArr = file.split('-');
+                            var originalFile = fileArr[0];
+                            var ef = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+                                var out = [];
+                                if (f.properties){
+                                    out.push(f.properties)
+                            l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong> 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong> 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong> 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
+
+                            
+                         }
+                            },         
+                            style: function(feature) {
+                            var prop;
+                            switch(year1){
+
+
+                                case '2000':
+                                prop = feature.properties.erisk2000m;
+                                break;
+
+                                case '2005':
+                                
+                                prop = feature.properties.erisk2005m;
+                                break;
+
+                                case '2010':
+                                prop = feature.properties.erisk2010m;
+                                break;
+
+                                case '2015':
+                                prop = feature.properties.erisk2015m;
+                                break;
+
+                                case '2020':
+                                prop = feature.properties.erisk2020m;
+                                break;
+
+                                default:
+                                console.log('Error!');
+                            }
+                                return {
+                                    opacity: 1,
+                                    fillOpacity: 0.7,
+                                    radius: 6,
+                                    weight: 1,
+                                    color: 'white',
+                                    fillColor: getErosionColor(prop)
+                                }
+                            },
+                            pointToLayer: function(feature, latlng) {
+
+                            var prop;
+                            switch(year1){
+
+                                case '2000':
+                                prop = feature.properties.erisk2000m;
+                                break;
+
+                                case '2005':
+                                prop = feature.properties.erisk2005m;
+                                break;
+
+                                case '2010':
+                                prop = feature.properties.erisk2010m;
+                                break;
+
+                                case '2015':
+                                prop = feature.properties.erisk2015m;
+                                break;
+
+                                case '2020':
+                                prop = feature.properties.erisk2020m;
+                                break;
+
+                                default:
+                                console.log('Error!');
+                            }
+                                return L.circleMarker(latlng, {
+                                    opacity: 1,
+                                    weight: 1,
+                                    fillOpacity: 0.7,
+                                    color: 'white',
+                                    fillColor: getErosionColor(prop)
+                                });
+                            }});
+                        
+                            shp(file).then(function(data){
+                                geo2.addTo(map1);
+                            ef.addData(data);
+                            ef.addTo(map1);
+                            map1.fitBounds(ef.getBounds());
+                        
+                            //renderErosionChart(year1);
+                            });
+
+                            //console.log(geo);
+                            ef.addTo(map1);
+                        
+
+                            // creating a canvas chart
+                            //renderChart(year1);
+                            // end of left year
+
+
+                            var file = '/data/erosion.zip';
+                            var fileArr = file.split('-');
+                            var originalFile = fileArr[0];
+                            var ef2 = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+                                var out = [];
+                                if (f.properties){
+                                    out.push(f.properties)
+                         l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong> 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong> 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong> 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
+
+                            
+                            }
+                         },         
+                            style: function(feature) {
+                            var prop;
+                            switch(year2){
+
+
+                                case '2000':
+                                prop = feature.properties.erisk2000m;
+                                break;
+
+                                case '2005':
+                                
+                                prop = feature.properties.erisk2005m;
+                                break;
+
+                                case '2010':
+                                prop = feature.properties.erisk2010m;
+                                break;
+
+                                case '2015':
+                                prop = feature.properties.erisk2015m;
+                                break;
+
+                                case '2020':
+                                prop = feature.properties.erisk2020m;
+                                break;
+
+                                default:
+                                console.log('Error!');
+                            }
+                                return {
+                                    opacity: 1,
+                                    fillOpacity: 0.7,
+                                    radius: 6,
+                                    weight: 1,
+                                    color: 'white',
+                                    fillColor: getErosionColor(prop)
+                                }
+                            },
+                            pointToLayer: function(feature, latlng) {
+
+                            var prop;
+                            switch(year2){
+
+                                case '2000':
+                                prop = feature.properties.erisk2000m;
+                                break;
+
+                                case '2005':
+                                prop = feature.properties.erisk2005m;
+                                break;
+
+                                case '2010':
+                                prop = feature.properties.erisk2010m;
+                                break;
+
+                                case '2015':
+                                prop = feature.properties.erisk2015m;
+                                break;
+
+                                case '2020':
+                                prop = feature.properties.erisk2020m;
+                                break;
+
+                                default:
+                                console.log('Error!');
+                            }
+                                return L.circleMarker(latlng, {
+                                    opacity: 1,
+                                    weight: 1,
+                                    fillOpacity: 0.7,
+                                    color: 'white',
+                                    fillColor: getErosionColor(prop)
+                                });
+                            }});
+                        
+                            shp(file).then(function(data){
+                            ef2.addData(data);
+                            ef2.addTo(map2);
+                            map2.fitBounds(ef2.getBounds());
+                            //geo2.addTo(map2);
+                            //renderErosionChart(year1);
+                            });
+
+                            //console.log(geo);
+                            ef2.addTo(map2);
+                            // creating a canvas chart
+                            //renderChart(year2);
+                           // end of right year
+                    }
+                }
+            }
+        });
+    }
+
+    w2popup.open({
+        title   : 'Soil loss comparison',
+        body    : '<div id="form2" style="width: 100%; height: 100%;"></div>',
+        style   : 'padding: 15px 0px 0px 0px',
+        width   : 500,
+        height  : 280,
+        showMax : true,
+        onToggle: function (event) {
+            $(w2ui.foo2.box).hide();
+            event.onComplete = function () {
+                $(w2ui.foo2.box).show();
+                w2ui.foo2.resize();
+            }
+        },
+        onOpen: function (event) {
+            event.onComplete = function () {
+                // specifying an onOpen handler instead is equivalent to specifying an onBeforeOpen handler, which would make this code execute too early and hence not deliver.
+                $('#w2ui-popup #form2').w2render('foo2');
+            }
+        }
+    });
+            }
+        }
+    });
+
+function comparePopulation(year1, year2){
+
+}
+
+function compareErosion(year1, year2){
+
+}
 
 if(localStorage.getItem('status') == 'population'){
     w2ui.sidebar.collapse('land');
@@ -1575,7 +2194,7 @@ CartoDB.addTo(map);
     }
 }
 
-function loadPopulationFile(year){
+function loadPopulationFile(year, panel){
     if(year == null){
                  w2ui.sidebar.click('2000p');
           w2ui.sidebar.select('2000p');
@@ -1637,7 +2256,8 @@ function loadPopulationFile(year){
         shp(file).then(function(data){
         geo.addData(data);
         legend.addTo(map);
-        //geo.addTo(map);
+        geo.addTo(map);
+    
         renderChart('null');
         map.fitBounds(geo.getBounds());
         });
@@ -2088,7 +2708,7 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
 	maxZoom:15
 }).addTo(map);
 // add the second basemap from OSM
-var osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+ osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 	attribution: '&copy; OSM',
 	minZoom: 4,
 	maxZoom: 15
@@ -2111,7 +2731,7 @@ var osm = L.tileLayer ('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 	style: function(feature) {
             return {
                 opacity: 1,
-                weight: 2,
+                weight: 1,
                 fillOpacity: 0.7,
                 radius: 6,
                 color: 'black',
