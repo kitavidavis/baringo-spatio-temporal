@@ -924,11 +924,23 @@ $(function () {
                             
                             map1.on('zoomend', function(e) {
                                 var zoomlevel = map1.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
                                  map2.setZoom(zoomlevel);
+                             });
+
+                              map1.on('dragend', function(e) {
+                                var center = map1.getCenter();
+                                 map2.setView(center, localStorage.getItem('zoomlevel'));
+                             });
+
+                              map2.on('dragend', function(e) {
+                                var center = map2.getCenter();
+                                 map1.setView(center, localStorage.getItem('zoomlevel'));
                              });
 
                              map2.on('zoomend', function(e) {
                                 var zoomlevel = map2.getZoom();
+                                 localStorage.setItem('zoomlevel', zoomlevel);
                                  map1.setZoom(zoomlevel);
                              });
 
@@ -965,8 +977,9 @@ document.getElementById('header-right').innerHTML = year2;
             if (f.properties){
                 out.push(f.properties)
                                             l.on('click', function (e) {
-                                map1.setView(e.latlng, 12)
-                                 map2.setView(e.latlng, 12)
+                                                localStorage.setItem('zoomlevel', 12);
+                                map1.setView(e.latlng, localStorage.getItem('zoomlevel'))
+                                 map2.setView(e.latlng, localStorage.getItem('zoomlevel'))
                                 });
         l.bindPopup('<table><tr><td><strong>Sublocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>2000</strong></td><td>'+Math.round(f.properties.pop2000)+'</td></tr><tr><td><strong>2005</strong></td><td>'+Math.round(f.properties.pop2005)+'</td></tr><tr><td><strong>2010</strong></td><td>'+Math.round(f.properties.pop2010)+'</td></tr><tr><td><strong>2015</strong></td><td>'+Math.round(f.properties.pop2015)+'</td></tr><tr><td><strong>2020</strong></td><td>'+Math.round(f.properties.pop2020)+'</td></tr></table>');
 
@@ -1068,6 +1081,7 @@ var file = '/data/population.zip';
             if (f.properties){
                 out.push(f.properties)
                                             layer.on('click', function (e) {
+                                                localStorage.setItem('zoomlevel', 12);
                                 map1.setView(e.latlng, 12)
                                  map2.setView(e.latlng, 12)
                                 });
@@ -1245,12 +1259,25 @@ if(category === 'compare-erosion'){
 
                             map1.on('zoomend', function(e) {
                                 var zoomlevel = map1.getZoom();
+                                localStorage.setItem('zoomlevel2', zoomlevel);
                                  map2.setZoom(zoomlevel);
                              });
 
                              map2.on('zoomend', function(e) {
                                 var zoomlevel = map2.getZoom();
+                                localStorage.setItem('zoomlevel2', zoomlevel);
                                  map1.setZoom(zoomlevel);
+                             });
+
+                             
+                              map1.on('dragend', function(e) {
+                                var center = map1.getCenter();
+                                 map2.setView(center, localStorage.getItem('zoomlevel2'));
+                             });
+
+                              map2.on('dragend', function(e) {
+                                var center = map2.getCenter();
+                                 map1.setView(center, localStorage.getItem('zoomlevel2'));
                              });
 
                             var year1 = $('#left-year').val();
@@ -1269,6 +1296,7 @@ if(category === 'compare-erosion'){
                                 if (f.properties){
                                     out.push(f.properties)
                                 l.on('click', function (e) {
+                                    localStorage.setItem('zoomlevel2', 12);
                                 map1.setView(e.latlng, 12)
                                  map2.setView(e.latlng, 12)
                                 });
@@ -1378,6 +1406,7 @@ if(category === 'compare-erosion'){
                                 if (f.properties){
                                     out.push(f.properties)
                                 l.on('click', function (e) {
+                                      localStorage.setItem('zoomlevel2', 12);
                                 map1.setView(e.latlng, 12)
                                  map2.setView(e.latlng, 12)
                                 });
