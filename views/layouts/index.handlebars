@@ -921,6 +921,17 @@ $(function () {
                                 map2.removeLayer(layer);
                             });
 
+                            
+                            map1.on('zoomend', function(e) {
+                                var zoomlevel = map1.getZoom();
+                                 map2.setZoom(zoomlevel);
+                             });
+
+                             map2.on('zoomend', function(e) {
+                                var zoomlevel = map2.getZoom();
+                                 map1.setZoom(zoomlevel);
+                             });
+
                        CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
 	attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
 	subdomains:'abcd',
@@ -953,7 +964,10 @@ document.getElementById('header-right').innerHTML = year2;
             var out = [];
             if (f.properties){
                 out.push(f.properties)
-
+                                            l.on('click', function (e) {
+                                map1.setView(e.latlng, 12)
+                                 map2.setView(e.latlng, 12)
+                                });
         l.bindPopup('<table><tr><td><strong>Sublocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>2000</strong></td><td>'+Math.round(f.properties.pop2000)+'</td></tr><tr><td><strong>2005</strong></td><td>'+Math.round(f.properties.pop2005)+'</td></tr><tr><td><strong>2010</strong></td><td>'+Math.round(f.properties.pop2010)+'</td></tr><tr><td><strong>2015</strong></td><td>'+Math.round(f.properties.pop2015)+'</td></tr><tr><td><strong>2020</strong></td><td>'+Math.round(f.properties.pop2020)+'</td></tr></table>');
 
         
@@ -1053,7 +1067,10 @@ var file = '/data/population.zip';
             var out = [];
             if (f.properties){
                 out.push(f.properties)
-
+                                            layer.on('click', function (e) {
+                                map1.setView(e.latlng, 12)
+                                 map2.setView(e.latlng, 12)
+                                });
         layer.bindPopup('<table><tr><td><strong>Sublocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>2000</strong></td><td>'+Math.round(f.properties.pop2000)+'</td></tr><tr><td><strong>2005</strong></td><td>'+Math.round(f.properties.pop2005)+'</td></tr><tr><td><strong>2010</strong></td><td>'+Math.round(f.properties.pop2010)+'</td></tr><tr><td><strong>2015</strong></td><td>'+Math.round(f.properties.pop2015)+'</td></tr><tr><td><strong>2020</strong></td><td>'+Math.round(f.properties.pop2020)+'</td></tr></table>');
 
         
@@ -1226,6 +1243,16 @@ if(category === 'compare-erosion'){
                             maxZoom:21
                             }).addTo(map2);
 
+                            map1.on('zoomend', function(e) {
+                                var zoomlevel = map1.getZoom();
+                                 map2.setZoom(zoomlevel);
+                             });
+
+                             map2.on('zoomend', function(e) {
+                                var zoomlevel = map2.getZoom();
+                                 map1.setZoom(zoomlevel);
+                             });
+
                             var year1 = $('#left-year').val();
                             var year2 = $('#right-year').val();
 
@@ -1241,6 +1268,10 @@ if(category === 'compare-erosion'){
                                 var out = [];
                                 if (f.properties){
                                     out.push(f.properties)
+                                l.on('click', function (e) {
+                                map1.setView(e.latlng, 12)
+                                 map2.setView(e.latlng, 12)
+                                });
                             l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong> 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong> 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong> 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
 
                             
@@ -1346,6 +1377,10 @@ if(category === 'compare-erosion'){
                                 var out = [];
                                 if (f.properties){
                                     out.push(f.properties)
+                                l.on('click', function (e) {
+                                map1.setView(e.latlng, 12)
+                                 map2.setView(e.latlng, 12)
+                                });
                          l.bindPopup('<table><tr><td><strong>SubLocation</strong></td><td><strong>'+f.properties.SLNAME+'</strong></td></tr><tr><td><strong>1995</strong></td><td>'+f.properties.erisk1995m.toFixed(2)+'</td></tr><tr><td><strong>2000</strong></td><td>'+f.properties.erisk2000m.toFixed(2)+'</td></tr><tr><td><strong>2005</strong></td><td>'+f.properties.erisk2005m.toFixed(2)+'</td></tr><tr><td><strong> 2010</strong></td><td>'+f.properties.erisk2010m.toFixed(2)+'</td></tr><tr><td><strong> 2015</strong></td><td>'+f.properties.erisk2015m.toFixed(2)+'</td></tr><tr><td><strong> 2020</strong></td><td>'+f.properties.erisk2020m.toFixed(2)+'</td></tr></table>');
 
                             
