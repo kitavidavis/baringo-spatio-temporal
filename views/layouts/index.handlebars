@@ -816,6 +816,26 @@ var CartoDBw1 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyag
 	maxZoom:15
 }).addTo(watermap1);
 
+                            watermap1.on('zoomend', function(e) {
+                                var zoomlevel = watermap1.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
+                                 watermap2.setZoom(zoomlevel);
+                                 watermap3.setZoom(zoomlevel);
+                                 watermap4.setZoom(zoomlevel);
+                                 watermap5.setZoom(zoomlevel);
+                                 watermap6.setZoom(zoomlevel);
+                             });
+
+                              watermap1.on('dragend', function(e) {
+                                var center = watermap1.getCenter();
+                                 watermap2.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap3.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap4.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap5.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap6.setView(center, localStorage.getItem('zoomlevel'));
+                             });
+
+
 
 	var file = '/data/water/water1995.zip';
 
@@ -883,6 +903,24 @@ var CartoDBw2 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyag
 	maxZoom:15
 }).addTo(watermap2);
 
+                            watermap2.on('zoomend', function(e) {
+                                var zoomlevel = watermap2.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
+                                 watermap1.setZoom(zoomlevel);
+                                 watermap3.setZoom(zoomlevel);
+                                 watermap4.setZoom(zoomlevel);
+                                 watermap5.setZoom(zoomlevel);
+                                 watermap6.setZoom(zoomlevel);
+                             });
+
+                              watermap2.on('dragend', function(e) {
+                                var center = watermap2.getCenter();
+                                 watermap1.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap3.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap4.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap5.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap6.setView(center, localStorage.getItem('zoomlevel'));
+                             });
 
 	var file = '/data/water/water2000.zip';
 
@@ -949,6 +987,24 @@ var CartoDBw3 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyag
 	maxZoom:15
 }).addTo(watermap3);
 
+                            watermap3.on('zoomend', function(e) {
+                                var zoomlevel = watermap3.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
+                                 watermap2.setZoom(zoomlevel);
+                                 watermap1.setZoom(zoomlevel);
+                                 watermap4.setZoom(zoomlevel);
+                                 watermap5.setZoom(zoomlevel);
+                                 watermap6.setZoom(zoomlevel);
+                             });
+
+                              watermap3.on('dragend', function(e) {
+                                var center = watermap3.getCenter();
+                                 watermap1.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap2.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap4.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap5.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap6.setView(center, localStorage.getItem('zoomlevel'));
+                             });
 
 	var file = '/data/water/water2005.zip';
 
@@ -1015,6 +1071,24 @@ var CartoDBw4 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyag
 	maxZoom:15
 }).addTo(watermap4);
 
+                            watermap4.on('zoomend', function(e) {
+                                var zoomlevel = watermap4.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
+                                 watermap1.setZoom(zoomlevel);
+                                 watermap3.setZoom(zoomlevel);
+                                 watermap2.setZoom(zoomlevel);
+                                 watermap5.setZoom(zoomlevel);
+                                 watermap6.setZoom(zoomlevel);
+                             });
+
+                              watermap4.on('dragend', function(e) {
+                                var center = watermap4.getCenter();
+                                 watermap1.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap3.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap2.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap5.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap6.setView(center, localStorage.getItem('zoomlevel'));
+                             });
 
 	var file = '/data/water/water2010.zip';
 
@@ -1081,6 +1155,24 @@ var CartoDBw5 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyag
 	maxZoom:15
 }).addTo(watermap5);
 
+                            watermap5.on('zoomend', function(e) {
+                                var zoomlevel = watermap5.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
+                                 watermap1.setZoom(zoomlevel);
+                                 watermap3.setZoom(zoomlevel);
+                                 watermap4.setZoom(zoomlevel);
+                                 watermap2.setZoom(zoomlevel);
+                                 watermap6.setZoom(zoomlevel);
+                             });
+
+                              watermap5.on('dragend', function(e) {
+                                var center = watermap5.getCenter();
+                                 watermap1.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap3.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap4.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap2.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap6.setView(center, localStorage.getItem('zoomlevel'));
+                             });
 
 	var file = '/data/water/water2015.zip';
 
@@ -1146,7 +1238,24 @@ var CartoDBw6 = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyag
 	maxZoom:15
 }).addTo(watermap6);
 
+                            watermap6.on('zoomend', function(e) {
+                                var zoomlevel = watermap6.getZoom();
+                                localStorage.setItem('zoomlevel', zoomlevel);
+                                 watermap1.setZoom(zoomlevel);
+                                 watermap3.setZoom(zoomlevel);
+                                 watermap4.setZoom(zoomlevel);
+                                 watermap5.setZoom(zoomlevel);
+                                 watermap2.setZoom(zoomlevel);
+                             });
 
+                              watermap6.on('dragend', function(e) {
+                                var center = watermap6.getCenter();
+                                 watermap1.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap3.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap4.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap5.setView(center, localStorage.getItem('zoomlevel'));
+                                 watermap2.setView(center, localStorage.getItem('zoomlevel'));
+                             });
 	var file = '/data/water/water2020.zip';
 
 
