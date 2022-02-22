@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    </head>
+    <body>
+        <canvas id="can1"></canvas>
+        <script>
+           var ctx = document.getElementById('can1').getContext('2d');
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    datasets: [{
+      label: 'Bar Dataset',
+      data: [10, 20, 30, 40],
+      backgroundColor: 'green',
+      order: 2
+    }, {
+      label: 'Line Dataset',
+      data: [20, 20, 20, 20],
+      type: 'line',
+      borderColor: 'blue',
+      order: 1
+    }],
+    labels: ['January', 'February', 'March', 'April']
+  },
+});
+        </script>
+    </body>
+</html>
