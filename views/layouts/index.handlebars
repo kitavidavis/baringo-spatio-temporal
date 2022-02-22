@@ -236,7 +236,7 @@ var _layer2020;
 var currentLayer = [];
 
 if(localStorage.getItem('status') === null){
-    localStorage.setItem('status', 'landcover');
+    localStorage.setItem('status', 'erosion');
 }
 
 if(localStorage.getItem('status') == 'landcover'){
@@ -688,6 +688,7 @@ $(function () {
             $('#map-comparison').hide();
             if(localStorage.getItem('status') != 'water'){
                    $('#chart-div').show();
+                    $("#water-stats").hide();
             }
             $('#map').show();
 
