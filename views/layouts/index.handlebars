@@ -119,6 +119,8 @@ var osm;
 var geo2;
 var lc;
 var sbs;
+var school;
+var health;
 
 // compariosn
 let map1;
@@ -207,7 +209,7 @@ $(function () {
         items: [
             { type: 'button', id: 'play_time', text: 'Change animation speed' },
             { type: 'break' },
-            { type: 'button', id: 'full', text: 'Full Screen' },
+            { type: 'button', id: 'full', text: 'Full Screen' }
             
         ],
         onClick: function (event) {
@@ -471,7 +473,8 @@ async function loadSix(){
             };
 
             legend.addTo(map);
-
+                    loadSchools();
+        loadHealthCenters();
             currentLayer.push(_layer2020);
             rasterLayers.push('LC 2020'); 
             progressText();
@@ -1936,7 +1939,7 @@ var file = '/data/population.zip';
     //renderChart(year2);
 // end of right year
                     }
-                    }
+                }
             }
         });
     }
@@ -3248,8 +3251,10 @@ function loadErosionFile(year){
         eFile.addData(data);
         //eFile.addTo(map);
         map.fitBounds(eFile.getBounds());
-               geo2.addTo(map);
+         geo2.addTo(map);
          legend.addTo(map);
+        loadSchools();
+        loadHealthCenters();
         renderErosionChart(null);
         });
 
@@ -3422,6 +3427,8 @@ function loadPopulationFile(year, panel){
         shp(file).then(function(data){
         geo.addData(data);
         legend.addTo(map);
+        loadSchools();
+        loadHealthCenters();
         geo.addTo(map);
     
         renderChart('null');
@@ -3865,7 +3872,7 @@ let lineChart = new Chart(canvas2, {
 
 
 $(function() {
-map = new L.map('map').setView([0.5, 36.819], 6);
+map = new L.map('map').setView([0.5, 36.819], 8);
 // add basemaps from cartodb - darkmatter.
 CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
 	attribution: '&copy; GeopsyResearch, foloo; contributors: <a href="http://cartodb.com/attributions#basemaps">CartoDB</a>',
@@ -3920,17 +3927,115 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
         map.fitBounds(geo2.getBounds());
         });
 
+
         //console.log(geo);
         geo2.addTo(map);
+
+        // loading schools
+            var file2 = '/data/schools.zip';
+
+
+	     school = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                for(var key in f.properties){
+                out.push(key);
+        }
+        l.bindPopup("<table class='table' ><tr><td><strong>Institute</strong></td><td>"+f.properties.INSTITUTE+"</td></tr></table>");
+    }
+    },         
+	style: function(feature) {
+            return {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                color: 'yellow',
+                fillColor: 'yellow'
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 2,
+                fillOpacity: 0.7,
+                color: 'yellow',
+                fillColor: 'yellow'
+            });
+        }});
+    
+        shp(file2).then(function(data){
+        school.addData(data);
+        //school.addTo(map);
+        });
+
+        //console.log(geo);
+        //school.addTo(map);
+
+
+        // loading health facilities
+         var file3 = '/data/health.zip';
+
+
+	     health = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
+            var out = [];
+            if (f.properties){
+                for(var key in f.properties){
+                out.push(key);
+        }
+        l.bindPopup("<table class='table' ><tr><td><strong>Facility Name</strong></td><td>"+f.properties.Facility_n+"</td></tr> <tr><td><strong>Facility Type</strong></td><td>"+f.properties.Facility_t+"</td></tr></table>");
+    }
+    },         
+	style: function(feature) {
+            return {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.7,
+                radius: 6,
+                color: 'purple',
+                fillColor: 'purple'
+            }
+        },
+        pointToLayer: function(feature, latlng) {
+            return L.circleMarker(latlng, {
+                opacity: 1,
+                weight: 1,
+                fillOpacity: 0.5,
+                color: 'purple',
+                fillColor: 'purple'
+            });
+        }});
+    
+        shp(file3).then(function(data){
+        health.addData(data);
+        //health.addTo(map);
+        });
+
+        //console.log(geo);
+        //health.addTo(map);
 
         var baseLayers = {
             "CartoDB": CartoDB,
             "OSM": osm
         };
 
-       lc = L.control.layers(baseLayers).addTo(map);
+        var overlays = {
+            "Schools": school,
+            "Health Facilities": health
+        };
+
+       lc = L.control.layers(baseLayers, overlays).addTo(map);
 
 })
+
+function loadSchools(){
+
+
+}
+
+function loadHealthCenters(){
+       
+}
 
 </script>
 </body>
