@@ -3932,7 +3932,7 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
         geo2.addTo(map);
 
         // loading schools
-            var file2 = '/data/schools.zip';
+            var file2 = '/data/baringo_schools.zip';
 
 
 	     school = L.geoJson({features:[]},{onEachFeature:function popUp(f,l){
@@ -3941,7 +3941,8 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
                 for(var key in f.properties){
                 out.push(key);
         }
-        l.bindPopup("<table class='table' ><tr><td><strong>Institute</strong></td><td>"+f.properties.INSTITUTE+"</td></tr></table>");
+        console.log(f);
+        l.bindPopup("<table class='table' ><tr><td><strong>Name</strong></td><td>"+f.properties.SCHOOL_NAM+"</td></tr><tr><td><strong>Level</strong></td><td>"+f.properties.LEVEL+"</td></tr></table>");
     }
     },         
 	style: function(feature) {
@@ -3950,8 +3951,8 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
                 weight: 1,
                 fillOpacity: 0.7,
                 radius: 6,
-                color: 'yellow',
-                fillColor: 'yellow'
+                color: 'blue',
+                fillColor: 'blue'
             }
         },
         pointToLayer: function(feature, latlng) {
@@ -3959,18 +3960,18 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
                 opacity: 1,
                 weight: 2,
                 fillOpacity: 0.7,
-                color: 'yellow',
-                fillColor: 'yellow'
+                color: 'blue',
+                fillColor: 'blue'
             });
         }});
     
         shp(file2).then(function(data){
         school.addData(data);
-        //school.addTo(map);
+        school.addTo(map);
         });
 
         //console.log(geo);
-        //school.addTo(map);
+        school.addTo(map);
 
 
         // loading health facilities
@@ -3992,8 +3993,8 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
                 weight: 1,
                 fillOpacity: 0.7,
                 radius: 6,
-                color: 'purple',
-                fillColor: 'purple'
+                color: 'red',
+                fillColor: 'red'
             }
         },
         pointToLayer: function(feature, latlng) {
@@ -4001,18 +4002,18 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
                 opacity: 1,
                 weight: 1,
                 fillOpacity: 0.5,
-                color: 'purple',
-                fillColor: 'purple'
+                color: 'red',
+                fillColor: 'red'
             });
         }});
     
         shp(file3).then(function(data){
         health.addData(data);
-        //health.addTo(map);
+        health.addTo(map);
         });
 
         //console.log(geo);
-        //health.addTo(map);
+        health.addTo(map);
 
         var baseLayers = {
             "CartoDB": CartoDB,
@@ -4023,6 +4024,8 @@ CartoDB = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_lab
             "Schools": school,
             "Health Facilities": health
         };
+
+        $(".leaflet-control-layers").addClass("leaflet-control-layers-expanded")
 
        lc = L.control.layers(baseLayers, overlays).addTo(map);
 
